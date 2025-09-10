@@ -11,14 +11,14 @@ theme:
   name: material
   palette:
     - scheme: default
-      primary: orange
-      accent: lime
+      primary: cyan
+      accent: blue-grey
       toggle:
         icon: material/brightness-2
         name: Mudar para modo escuro
     - scheme: slate
-      primary: orange
-      accent: lime
+      primary: cyan
+      accent: blue-grey
       toggle:
         icon: material/brightness-7
         name: Mudar para modo claro
