@@ -1,6 +1,6 @@
 # 🐍 Compilador Python (Flex & Bison)
 
-Este projeto implementa um **compilador para a linguagem Python** utilizando as ferramentas **Flex** (analisador léxico) e **Bison** (analisador sintático).
+Este projeto implementa um **compilador para a linguagem Python** utilizando as ferramentas **Flex** (analisador léxico) e **Bison** (analisador sintático) para a disciplina de Compiladores 1, ministrada pelo professor Dr. Sérgio Antônio no semestre 2025.2, da Faculdade de Ciências e Tecnologia em Engenharia da Universidade de Brasília (FCTE/UnB).
 
 ---
 
@@ -59,7 +59,7 @@ O compilador segue a arquitetura clássica em fases:
 
 3. **Análise Semântica**
 
-   - Valida regras semânticas (tipagem, variáveis, etc.).
+   - Valida regras semânticas (tipagem, variáveis, etc).
 
 4. **Geração de Código**
    - Produz código intermediário ou executável final.
@@ -74,10 +74,10 @@ O compilador segue a arquitetura clássica em fases:
 | Arthur Carvalho | [@arthurlleite](https://github.com/arthurlleite)   |
 | Davi Camilo     | [@Davicamilo23](https://github.com/Davicamilo23)   |
 | Euller Júlio    | [@Potatoyz908](https://github.com/Potatoyz908)     |
-| Tiago Antunes   | [@Davicamilo23](https://github.com/TiagoBalieiro)  |
+| Tiago Antunes   | [@TiagoBalieiro](https://github.com/TiagoBalieiro) |
 
 ---
 
 ## 📄 Licença
 
-Este projeto é distribuído sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais informações.
+Este projeto é distribuído sob a licença MIT.
