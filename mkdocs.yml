@@ -1,0 +1,36 @@
+site_name: Grupo 10 - Compiladores 1
+repo_url: https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10
+
+nav:
+  - Home: index.md
+  - Sobre o Projeto: sobre.md
+  - Atas:
+    - Reunião 01: atas/ata01.md
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: orange
+      accent: lime
+      toggle:
+        icon: material/brightness-2
+        name: Mudar para modo escuro
+    - scheme: slate
+      primary: orange
+      accent: lime
+      toggle:
+        icon: material/brightness-7
+        name: Mudar para modo claro
+
+  font:
+    text: Poppins
+  
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.path
+    - navigation.top
+
+extra:
+  generator: false
