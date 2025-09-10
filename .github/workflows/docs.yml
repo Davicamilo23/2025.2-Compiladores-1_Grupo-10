@@ -1,0 +1,41 @@
+name: Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    name: mkdocs deploy
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        python-version: ["3.11"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Create a virtual environment
+      run: python -m venv .venv
+
+    - name: Install dependencies
+      run: |
+        . .venv/bin/activate  # Ativar ambiente virtual
+        pip install --upgrade pip
+        pip install mkdocs mkdocs-material
+
+    - name: Deploy Docs
+      run: |
+        . .venv/bin/activate  # Ativar ambiente virtual
+        mkdocs gh-deploy --force
