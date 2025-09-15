@@ -7,14 +7,12 @@ int yylex(void);
 void yyerror(const char* s);
 %}
 
-%union {
-    char* s;
-}
+%define api.value.type {char*}
 
-%token <s> ID INT_LIT STRING_LIT
 %token NEWLINE INDENT DEDENT
 %token DEF IF ELIF ELSE WHILE RETURN PRINT
 %token AND OR NOT TRUE FALSE NONE
+%token ID INT_LIT STRING_LIT
 %token PLUS MINUS STAR SLASHSLASH PERCENT
 %token EQEQ NE LT LE GT GE ASSIGN
 %token COLON COMMA LPAREN RPAREN
