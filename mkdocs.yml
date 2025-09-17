@@ -6,6 +6,7 @@ nav:
   - Sobre o Projeto: sobre.md
   - Atas:
     - Reunião 01: atas/ata01.md
+    - Reunião 02: atas/ata02.md
 
 theme:
   name: material
