@@ -83,13 +83,14 @@
 
 | Nº | Compromisso | Responsável | Prazo |
 |----|-------------|-------------|-------|
-| 1  | Corrigir o Gitpages e Refazer os testes na linguagem correta. | [Arthur Carvalho](https://github.com/arthurlleite) | 15/09 |
-| 2  | Corrigir o arquivo lexer.l inicial e fazer os slides. | [Davi Camilo Menezes](https://github.com/Davicamilo23) | 15/09 |
-| 3  | Corrigir o arquivo parser.y e terminar o arquivo lexer.l | [Tiago Antunes Balieiro](https://github.com/tiagobalieiro) | 15/09 |
-| 4  | Documento inicial descrevendo a linguagem (tokens, estruturas, exemplos de código) e avançar no arquivo parser.y. | [Euller Júlio da Silva](https://github.com/Potatoyz908) | 15/09 |
+| 1  | Corrigir o Gitpages e Refazer os testes na linguagem correta. | [Arthur Carvalho](https://github.com/arthurlleite) | 24/09 |
+| 2  | Corrigir o arquivo lexer.l inicial e fazer os slides. | [Davi Camilo Menezes](https://github.com/Davicamilo23) | 24/09 |
+| 3  | Corrigir o arquivo parser.y e terminar o arquivo lexer.l. | [Tiago Antunes Balieiro](https://github.com/tiagobalieiro) | 24/09 |
+| 4  | Documento inicial descrevendo a linguagem (tokens, estruturas, exemplos de código) e avançar no arquivo parser.y. | [Euller Júlio da Silva](https://github.com/Potatoyz908) | 24/09 |
 
 ## Histórico de Versão
 
 | Versão | Data          | Descrição                          | Autor(es)     |  Revisor(es)  |
 | ------ | ------------- | ---------------------------------- | ------------- | ------------- |
 | `1.0`  |  17/09/2025 |  Criação do Documento | [Tiago Antunes](https://github.com/tiagobalieiro) | [Euller Júlio da Silva](https://github.com/Potatoyz908) |
+| `1.1`  |  17/09/2025 |  Correção das datas do prazo | [Davi Camilo](https://github.com/Davicamilo23) | [Tiago Antunes](https://github.com/tiagobalieiro) |
