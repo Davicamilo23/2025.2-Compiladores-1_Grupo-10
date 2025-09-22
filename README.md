@@ -1,14 +1,15 @@
-# 🐍 Compilador Python (Flex & Bison)
+# � Compilador C → Python (Flex & Bison)
 
-Este projeto implementa um **compilador para a linguagem Python** utilizando as ferramentas **Flex** (analisador léxico) e **Bison** (analisador sintático) para a disciplina de Compiladores 1, ministrada pelo professor Dr. Sérgio Antônio no semestre 2025.2, da Faculdade de Ciências e Tecnologia em Engenharia da Universidade de Brasília (FCTE/UnB).
+Este projeto implementa um **compilador que traduz código C para Python** utilizando as ferramentas **Flex** (analisador léxico) e **Bison** (analisador sintático) para a disciplina de Compiladores 1, ministrada pelo professor Dr. Sérgio Antônio no semestre 2025.2, da Faculdade de Ciências e Tecnologia em Engenharia da Universidade de Brasília (FCTE/UnB).
 
 ---
 
 ## 🎯 Objetivos do Projeto
 
-- Desenvolver um compilador capaz de analisar e interpretar programas escritos em Python (ou um subconjunto definido da linguagem).
+- Desenvolver um compilador capaz de analisar programas escritos em **C** e traduzi-los para **Python**.
 - Explorar conceitos de **Análise Léxica, Sintática e Semântica**.
 - Praticar a implementação de compiladores com **C, Flex e Bison**.
+- Implementar tradução automática entre linguagens de programação.
 
 ---
 
@@ -26,8 +27,8 @@ Este projeto implementa um **compilador para a linguagem Python** utilizando as 
 1. Clone o repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/seu-repo.git
-   cd seu-repo
+   git clone https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10.git
+   cd 2025.2-Compiladores-1_Grupo-10
    ```
 
 2. Compile o projeto com o `make`:
@@ -36,33 +37,118 @@ Este projeto implementa um **compilador para a linguagem Python** utilizando as 
    make
    ```
 
-3. Execute o compilador:
+3. Execute o compilador com um arquivo C:
    ```bash
-   ./compilares exemplo.py
+   ./c2python exemplo.c
    ```
 
 ---
 
 ## 🏗️ Arquitetura do Compilador
 
-O compilador segue a arquitetura clássica em fases:
+O compilador segue a arquitetura clássica em fases para tradução C → Python:
 
 1. **Análise Léxica (scanner)**
 
    - Implementada com **Flex**.
-   - Converte o código fonte em **tokens**.
+   - Converte o código fonte C em **tokens**.
 
 2. **Análise Sintática (parser)**
 
    - Implementada com **Bison**.
-   - Verifica se a sequência de tokens respeita a gramática da linguagem.
+   - Verifica se a sequência de tokens respeita a gramática da linguagem C.
 
 3. **Análise Semântica**
 
-   - Valida regras semânticas (tipagem, variáveis, etc).
+   - Valida regras semânticas (tipagem, variáveis, escopo).
+   - Constrói tabela de símbolos.
 
-4. **Geração de Código**
-   - Produz código intermediário ou executável final.
+4. **Geração de Código Python**
+   - Traduz construções C para equivalentes Python.
+   - Produz código Python funcional e legível.
+
+---
+
+## 📖 Especificação da Linguagem
+
+### 🔤 Linguagem-Fonte: C (Subconjunto)
+
+Nosso compilador suporta um subconjunto da linguagem C, incluindo:
+
+- **Tipos básicos**: `int`, `float`, `char`
+- **Estruturas de controle**: `if/else`, `while`, `for`
+- **Funções**: definição e chamada
+- **Expressões**: aritméticas, relacionais, lógicas
+- **Arrays**: unidimensionais básicos
+
+### 🐍 Linguagem-Alvo: Python
+
+O código C é traduzido para Python idiomático, mantendo:
+
+- **Funcionalidade equivalente**
+- **Legibilidade do código**
+- **Estruturas Python apropriadas**
+
+Para mais detalhes, consulte nossa [**Especificação Completa da Linguagem**](linguagem-fonte-c.md).
+
+---
+
+## 📚 Exemplos de Tradução
+
+### Exemplo 1: Programa Simples
+**Entrada (C):**
+```c
+#include <stdio.h>
+
+int main() {
+    int x = 10;
+    printf("Valor: %d\n", x);
+    return 0;
+}
+```
+
+**Saída (Python):**
+```python
+def main():
+    x = 10
+    print(f"Valor: {x}")
+    return 0
+
+if __name__ == "__main__":
+    main()
+```
+
+### Exemplo 2: Estrutura Condicional
+**Entrada (C):**
+```c
+int maior(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+```
+
+**Saída (Python):**
+```python
+def maior(a, b):
+    if a > b:
+        return a
+    else:
+        return b
+```
+
+---
+
+## 🧪 Testes e Validação
+
+O projeto inclui uma suíte abrangente de testes:
+
+- **Testes unitários** para cada fase do compilador
+- **Casos de teste** com programas C representativos
+- **Validação** da equivalência funcional C ↔ Python
+- **Testes de erro** para validar tratamento de exceções
 
 ---
 
