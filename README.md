@@ -89,7 +89,7 @@ O código C é traduzido para Python idiomático, mantendo:
 - **Legibilidade do código**
 - **Estruturas Python apropriadas**
 
-Para mais detalhes, consulte nossa [**Especificação Completa da Linguagem**](linguagem-fonte-c.md).
+Para mais detalhes, consulte nossa [**Especificação Completa da Linguagem**](https://davicamilo23.github.io/2025.2-Compiladores-1_Grupo-10/linguagem-fonte-c/).
 
 ---
 
