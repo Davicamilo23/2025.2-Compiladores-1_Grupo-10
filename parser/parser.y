@@ -1,7 +1,7 @@
 /* parser.y – Bison
  * Subconjunto de C com ponteiros, blocos, if/else, while, retorno e expressões.
- * Ações imprimem marcadores para acompanhar o reconhecimento e (opcionalmente)
- * conectar depois com geração de Python.
+ * Compatível com lexer C-like (chaves) ou com Python-like se você mapear blocos depois.
+ * Mantém gramática da branch feat (C + ponteiros) e yyerror detalhado da main.
  */
 
 %{
@@ -12,7 +12,12 @@
   int yylex(void);
   void yyerror(const char* s);
 
-  /* helper para mostrar declarações de ponteiro */
+  /* Expostos pelo lexer (se implementar): */
+  extern int yylineno;
+  extern char *ultimo_token;
+  extern char *ultimo_lexema;
+
+  /* helper para logar declarações de ponteiro (debug) */
   static void show_decl(const char* type, const char* name, int ptr_level) {
     printf("[DECL] %s %s (ptr_level=%d)\n", type, name, ptr_level);
   }
@@ -47,10 +52,10 @@
 %left PLUS MINUS
 %left STAR SLASH PERCENT
 %right NOT
-%right UAMP USTAR UMINUS  /* unários: &  *  - */
+%right UAMP USTAR UMINUS        /* unários: &  *  - */
 %right ASSIGN PLUSEQ MINUSEQ STAREQ SLASHEQ PERCENTEQ
 
-%type <n> pointer_opt
+%type <n>    pointer_opt
 %type <sval> type_spec
 %type <sval> IDENT
 %type <ival> ICONST
@@ -58,6 +63,7 @@
 
 %%
 
+/* ---------- Unidade de tradução (mantemos C, descartamos a "calculadora") ---------- */
 translation_unit
   : external_declaration
   | translation_unit external_declaration
@@ -114,7 +120,7 @@ function_def
 
 declarator_func
   : IDENT LPAREN param_list_opt RPAREN       { /* nome da função em $1 */ free($1); }
-  | STAR declarator_func                     { /* ponteiro para função - aceito sintaticamente */ }
+  | STAR declarator_func                     { /* ponteiro para função - aceita sintaticamente */ }
   ;
 
 param_list_opt
@@ -131,7 +137,7 @@ param_decl
   : type_spec pointer_opt IDENT              { show_decl($1, $3, $2); free($3); }
   ;
 
-/* ---------- Blocos e statements ---------- */
+/* ---------- Blocos e statements (C com chaves) ---------- */
 
 compound_stmt
   : LBRACE stmt_list_opt RBRACE
@@ -230,16 +236,16 @@ multiplicative_expression
 /* --- PONTEIROS: & (address-of) e * (deref) no nível unário --- */
 unary_expression
   : postfix_expression
-  | AMP unary_expression        %prec UAMP   { printf("[PTR] addr-of\n"); }
-  | STAR unary_expression       %prec USTAR  { printf("[PTR] deref\n"); }
+  | AMP unary_expression        %prec UAMP   { printf("[PTR] addr-of\n"); }   /* &x  */
+  | STAR unary_expression       %prec USTAR  { printf("[PTR] deref\n"); }     /* *p  */
   | MINUS unary_expression      %prec UMINUS
   | NOT unary_expression
   ;
 
 postfix_expression
   : primary_expression
-  | postfix_expression LBRACK expression RBRACK    /* indexação (aceita sintaticamente) */
-  | postfix_expression LPAREN argument_expr_list_opt RPAREN   /* chamada */
+  | postfix_expression LBRACK expression RBRACK                 /* indexação */
+  | postfix_expression LPAREN argument_expr_list_opt RPAREN     /* chamada */
   | postfix_expression DOT IDENT
   | postfix_expression ARROW IDENT
   ;
@@ -264,6 +270,14 @@ primary_expression
 
 %%
 
+/* yyerror detalhado (trazido e adaptado da main) */
 void yyerror(const char* s) {
-  fprintf(stderr, "[SINTAXE] erro: %s (linha %d)\n", s, yylineno);
+    fprintf(stderr, "\n=== ERRO SINTÁTICO ===\n");
+    fprintf(stderr, "Linha %d: %s\n", yylineno, s);
+    if (ultimo_token && ultimo_lexema) {
+        fprintf(stderr, "Último token lido: %s ('%s')\n", ultimo_token, ultimo_lexema);
+    } else {
+        fprintf(stderr, "Último token/lexema indisponível.\n");
+    }
+    fprintf(stderr, "======================\n\n");
 }
