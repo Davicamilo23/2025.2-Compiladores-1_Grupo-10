@@ -4,11 +4,12 @@ repo_url: https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10
 nav:
   - Home: index.md
   - Sobre o Projeto: sobre.md
+  - Tokens e Estrutura: linguagem-fonte-c.md
   - Atas:
     - Reunião 01: atas/ata01.md
     - Reunião 02: atas/ata02.md
     - Reunião 03: atas/ata03.md
-    - Tokens e Estrutura: linguagem-fonte-c.md
+    
 
 theme:
   name: material
