@@ -7,6 +7,7 @@ nav:
   - Atas:
     - Reunião 01: atas/ata01.md
     - Reunião 02: atas/ata02.md
+    - Reunião 03: atas/ata03.md
 
 theme:
   name: material
