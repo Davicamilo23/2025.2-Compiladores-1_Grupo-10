@@ -15,3 +15,12 @@ Escolhemos desenvolver um **compilador de C para Python** por diversos motivos, 
 4. **Familiaridade do grupo com as linguagens**: Os integrantes já possuem experiência prévia com C e Python, o que facilita a implementação e validação do compilador, tornando o desenvolvimento mais eficiente e confiável.
 
 5. **Escolha por compilador**: A equipe optou por desenvolver um compilador, e não um interpretador, para alinhar o projeto ao principal foco da disciplina (visto que o nome da disciplina é "Compiladores 1"), que aborda conceitos de compilação, geração de código e análise léxica/sintática de forma mais profunda.
+
+# Organização do Projeto
+
+## Ferramenta de Gerenciamento
+
+Optamos por utilizar o **Kanban** disponível no **Projects** para organizar e acompanhar as tarefas do projeto.  
+Essa ferramenta permite visualizar o progresso em colunas, facilitando o controle das atividades em andamento.
+
+👉 [Acesse o Kanban do Projeto aqui](https://github.com/users/Davicamilo23/projects/3)
