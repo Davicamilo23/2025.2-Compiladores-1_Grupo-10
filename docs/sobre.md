@@ -2,6 +2,8 @@
 
 Nosso grupo irá desenvolver um **compilador que transforma código em C em código equivalente em Python**. O projeto consiste em construir um **lexer**, um **parser** e um **gerador de código**, capazes de interpretar um subconjunto da linguagem C e produzir scripts Python que preservem a lógica e o comportamento do programa original. O compilador terá suporte a elementos essenciais como: declarações de variáveis, expressões aritméticas, estruturas de controle (if, while e for), funções simples e operações básicas de entrada e saída (printf e scanf simplificado). A ideia é criar uma base funcional mínima que permita testes iniciais, sendo expandida, ao decorrer das sprints, para suportar recursos mais avançados do C.
 
+---
+
 # Por que da escolha?
 
 Escolhemos desenvolver um **compilador de C para Python** por diversos motivos, os quais incluem:
@@ -15,6 +17,8 @@ Escolhemos desenvolver um **compilador de C para Python** por diversos motivos, 
 4. **Familiaridade do grupo com as linguagens**: Os integrantes já possuem experiência prévia com C e Python, o que facilita a implementação e validação do compilador, tornando o desenvolvimento mais eficiente e confiável.
 
 5. **Escolha por compilador**: A equipe optou por desenvolver um compilador, e não um interpretador, para alinhar o projeto ao principal foco da disciplina (visto que o nome da disciplina é "Compiladores 1"), que aborda conceitos de compilação, geração de código e análise léxica/sintática de forma mais profunda.
+
+---
 
 # Organização do Projeto
 
