@@ -1,22 +1,28 @@
-# 🧪 Guia de Testes - Compilador Python-like
+# 🧪 Guia de Testes — Compilador (suíte portada para **C**)
+
+> Esta versão migra os testes que estavam em Python para **C**, mantendo a mesma intenção de verificação (incluindo casos de **erro**). Cada teste é um programa com `main()` e validação via `printf`.
+
+---
 
 ## Como Executar os Testes
 
 ### 🚀 Início Rápido
 
-1. **Compilar o projeto:**
+1. **(Opcional) Compilar o projeto principal**
    ```bash
    make clean && make
    ```
 
-2. **Executar bateria de testes:**
+2. **Executar a bateria de testes em C**
    ```bash
-   ./run_tests.sh
+   chmod +x run_c_tests.sh
+   ./run_c_tests.sh
    ```
 
-3. **Testar casos de erro:**
+3. **Verificar os casos de erro (espera-se falha na compilação)**
    ```bash
-   ./test_errors.sh
+   chmod +x test_c_errors.sh
+   ./test_c_errors.sh
    ```
 
 ---
@@ -24,20 +30,34 @@
 ## 📁 Estrutura de Testes
 
 ```
-tests/
-├── test_simple.py      # Atribuições básicas
-├── test_print.py       # Comandos print
-├── test_basic.py       # Teste com comentários
-├── test_if.py          # Estruturas condicionais (limitado)
-├── test_while.py       # Loops (limitado)
-├── test_function.py    # Definições de função (limitado)
-└── test_error.py       # Erros sintáticos intencionais
+tests_c/
+├── test_basic.c
+├── test_function.c
+├── test_if.c
+├── test_if_else.c
+├── test_if_elif_else.c
+├── test_if_flat.c
+├── test_if_simple.c
+├── test_nested_blocks.c
+├── test_print.c
+├── test_ptr_arith.c
+├── test_ptr_chain.c
+├── test_ptr_decl_assign.c
+├── test_ptr_if_while.c
+├── test_scope.c
+├── test_simple.c
+├── test_while.c
+└── errors/
+    ├── div_zero.c
+    ├── dois_pontos_ausente.c
+    ├── erro_de_ortografia.c
+    ├── mal_identacao.c
+    ├── tipo_incorreto.c
+    └── variavel_desconhecida.c
 
-Scripts de Teste:
-├── run_tests.sh        # Bateria principal de testes
-├── test_errors.sh      # Testes de casos de erro
-├── teste_manual.sh     # Menu interativo
-└── exemplos_teste.sh   # Exemplos com feedback visual
+Scripts:
+├── run_c_tests.sh      # compila e executa os testes "válidos"
+└── test_c_errors.sh    # confirma que os casos em errors/ falham na compilação
 ```
 
 ---
@@ -45,192 +65,206 @@ Scripts de Teste:
 ## ✅ Casos de Teste que Funcionam
 
 ### **Atribuições Simples**
-```python
-x = 10
-nome = "João"
-flag = True
+```c
+int x = 10;
+int y = 20;
+int z = x + y;
 ```
 
 ### **Expressões Aritméticas**
-```python
-resultado = 5 + 3 * 2
-valor = (10 + 5) * 2
-calculo = x // y + z % w
+```c
+int resultado = 5 + 3 * 2;
+int valor = (10 + 5) * 2;
+int resto = 42 % 5;
 ```
 
-### **Expressões Lógicas**
-```python
-condicao = True and False
-check = not flag
-teste = x > 0 or y < 10
+### **Expressões Lógicas / Comparações**
+```c
+int x = 5, y = 10;
+int maior  = x > y;     // 0
+int igual  = x == y;    // 0
+int menorE = x <= y;    // 1
 ```
 
-### **Comparações**
-```python
-igual = x == y
-diferente = a != b
-maior = num >= limite
+### **Saída com `printf`**
+```c
+printf("Hello World\n");
+printf("z=%d\n", z);
 ```
 
-### **Comando Print**
-```python
-print("Hello World")
-print("Resultado:")
+### **Controle de Fluxo**
+```c
+if (x > 0) printf("Positivo\n");
+
+int counter = 0;
+while (counter < 3) {
+    printf("%d\n", counter);
+    counter++;
+}
+```
+
+### **Funções**
+```c
+static int somar(int a, int b) { return a + b; }
+printf("%d\n", somar(5,3));
+```
+
+### **Ponteiros**
+```c
+int x = 10, *p = &x; *p = 20;        // x => 20
+int *q = &x, **pp = &q; **pp = 42;   // x => 42
 ```
 
 ---
 
-## ❌ Casos que Ainda Não Funcionam
+## ❌ Casos de Erro (diagnóstico do compilador)
 
-### **Estruturas com Blocos Indentados**
-```python
-# Não funciona ainda
-if x > 0:
-    print("Positivo")
+> Estes arquivos ficam em `tests_c/errors/` e **devem falhar** ao compilar (ou gerar UB óbvia), validando mensagens e robustez do front-end.
 
-while x < 10:
-    x = x + 1
+- `div_zero.c` — divisão por zero.
+- `dois_pontos_ausente.c` — falta `;` após declaração.
+- `erro_de_ortografia.c` — `pritnf` (símbolo indefinido).
+- `tipo_incorreto.c` — soma entre `int` e string literal.
+- `variavel_desconhecida.c` — símbolo não declarado.
+- `mal_identacao.c` — compila, mas mantém intenção de estilo ruim.
 
-def funcao():
-    return True
-```
-
-### **Comentários em Arquivos**
-```python
-# Comentários podem causar problemas em alguns casos
-x = 10  # Comentário inline
+Para rodar a verificação:
+```bash
+./test_c_errors.sh
 ```
 
 ---
 
 ## 🔧 Como Testar Manualmente
 
-### **Método 1: Teste Direto**
+### **Método 1: Teste direto de um arquivo**
 ```bash
-echo "x = 5 + 3" | ./pylite
+gcc -Wall -Wextra -std=c11 tests_c/test_simple.c -o test_simple.out
+./test_simple.out
 ```
 
-### **Método 2: Teste Interativo**
+### **Método 2: Outro arquivo específico**
 ```bash
-./pylite
-# Digite: x = 10
-# Pressione: Ctrl+D
+gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o test_if.out
+./test_if.out
 ```
 
-### **Método 3: Teste com Arquivo**
+### **Método 3: Suíte completa (scripts)**
 ```bash
-echo "resultado = 2 * 3" > meu_teste.py
-./pylite < meu_teste.py
-```
-
-### **Método 4: Menu Interativo**
-```bash
-./teste_manual.sh
-# Escolha uma opção do menu
+chmod +x run_c_tests.sh test_c_errors.sh
+./run_c_tests.sh
+./test_c_errors.sh
 ```
 
 ---
 
-## 📊 Resultados Esperados
+## 📊 Resultados Esperados (exemplos)
 
 ### **Teste Bem-Sucedido**
-```bash
-$ echo "x = 10" | ./pylite
-assign x := expr
-[OK] programa reconhecido
+```text
+z=30
 ```
 
-### **Teste com Print**
-```bash
-$ echo 'print("Hello")' | ./pylite
-print(...)
-[OK] programa reconhecido
+### **Teste com Condicional**
+```text
+Positivo
 ```
 
-### **Teste com Erro**
-```bash
-$ echo "x = 5 @@ 2" | ./pylite
-Unexpected character: @
-Unexpected character: @
-assign x := expr
-[SINTAXE] erro: syntax error
+### **Teste com Blocos Aninhados**
+```text
+A
+A1
+B
+```
+
+### **Ponteiros**
+```text
+x=20
+x=42
+```
+
+### **Loop**
+```text
+0
+1
+2
+```
+
+### **Caso de Erro (compilação)**
+```text
+.../tipo_incorreto.c: In function ‘main’:
+... error: invalid operands to binary + (have ‘int’ and ‘char *’)
 ```
 
 ---
 
 ## 🐛 Solução de Problemas
 
-### **Erro: "command not found"**
+### **“command not found” ao rodar script**
 ```bash
-# Verificar se o projeto foi compilado
-make clean && make
-
-# Verificar se o executável existe
-ls -la pylite
+chmod +x run_c_tests.sh test_c_errors.sh
 ```
 
-### **Erro: "syntax error" inesperado**
+### **Compilação falha por falta de GCC/Clang**
+- Instale o compilador:
+  - Debian/Ubuntu: `sudo apt-get install build-essential`
+  - Fedora: `sudo dnf install gcc`
+  - Arch: `sudo pacman -S gcc`
+
+### **Erros de linkagem ou flags**
+- Use um mínimo estável:
 ```bash
-# Verificar se o código está na sintaxe suportada
-# Evitar estruturas com indentação por enquanto
+gcc -std=c11 -Wall -Wextra arquivo.c -o arquivo.out
 ```
 
-### **Erro: Script não executa**
+### **Permissões no repositório**
 ```bash
-# Dar permissão de execução
-chmod +x run_tests.sh
-chmod +x test_errors.sh
-chmod +x teste_manual.sh
-chmod +x exemplos_teste.sh
+git config --global core.filemode false
 ```
 
 ---
 
 ## 📈 Expandindo os Testes
 
-### **Criar Novos Testes**
+### **Criar um novo teste**
 ```bash
-# Criar arquivo de teste
-echo "meu_codigo = True" > tests/meu_teste.py
+cat > tests_c/test_meu_exemplo.c <<'EOF'
+#include <stdio.h>
+int main(void){
+    printf("meu-exemplo\n");
+    return 0;
+}
+EOF
 
-# Testar
-./pylite < tests/meu_teste.py
+gcc -Wall -Wextra -std=c11 tests_c/test_meu_exemplo.c -o tests_c/test_meu_exemplo.out
+./tests_c/test_meu_exemplo.out
 ```
 
-### **Adicionar ao Script de Testes**
-Edite `run_tests.sh` e adicione:
-```bash
-echo "N. Meu novo teste:"
-echo "   Arquivo: meu_teste.py"
-cat tests/meu_teste.py
-echo "   Resultado:"
-./pylite < tests/meu_teste.py
-echo ""
-```
+### **Adicionar ao script**
+No `run_c_tests.sh`, inclua a compilação (o script já compila todos os `.c` do diretório raiz `tests_c/`, então basta salvar o arquivo).
 
 ---
 
 ## 🎯 Checklist de Testes
 
-- [ ] Atribuições simples funcionam
-- [ ] Expressões aritméticas funcionam
-- [ ] Operadores lógicos funcionam
-- [ ] Comparações funcionam
-- [ ] Print funciona
-- [ ] Parênteses funcionam
-- [ ] Erros são detectados
-- [ ] Caracteres inválidos são rejeitados
+- [ ] Atribuições simples funcionam  
+- [ ] Aritmética e precedência funcionam  
+- [ ] Comparações e lógicos funcionam  
+- [ ] `printf` imprime o esperado  
+- [ ] `if / else if / else` funcionam  
+- [ ] `while` funciona  
+- [ ] Funções e retorno funcionam  
+- [ ] Ponteiros e ponteiro de ponteiro funcionam  
+- [ ] Casos de erro geram diagnósticos de compilação  
 
 ---
 
 ## 📞 Suporte
 
-Se encontrar problemas:
+1. Confirme que o compilador está instalado (`gcc --version`).  
+2. Compile um teste simples antes da suíte.  
+3. Use os scripts `run_c_tests.sh` e `test_c_errors.sh`.  
+4. Verifique o README/Docs do projeto para flags/ambiente.
 
-1. Verifique se o projeto compila sem erros
-2. Teste com exemplos simples primeiro
-3. Use os scripts de teste fornecidos
-4. Consulte a documentação completa em `DOCUMENTACAO_SPRINT1.md`
-
-**Versão:** Sprint 1  
-**Data:** 13-14 de Setembro de 2025
+**Versão:** Suíte C  
+**Data:** _15/10/2025_

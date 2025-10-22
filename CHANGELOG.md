@@ -110,9 +110,9 @@ Estabelecer base funcional do compilador com análise léxica e sintática bási
 - 3 arquivos de documentação (.md)
 
 ### **Testes Implementados**
-- ✅ 7 casos de teste básicos
+- ✅ 18 casos de teste para cada funcionalidade a ser implementada e mais 6 testes de entrada ( para verificar algo que a pessoa tenha escrito errado) todos já em C
 - ✅ 4 scripts de automação
-- ✅ Testes de erro e validação
+- ✅ Testes de erro e validação todos em C
 - ✅ Menu interativo para testes manuais
 
 ### **Funcionalidades Validadas**

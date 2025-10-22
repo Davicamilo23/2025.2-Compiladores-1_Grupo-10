@@ -1,47 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "=== TESTE MANUAL COM EXEMPLOS ==="
-echo ""
+cat <<'TXT'
+Exemplos de uso (C):
 
-# Função para testar e mostrar resultado
-testar() {
-    local codigo="$1"
-    local descricao="$2"
-    
-    echo "📝 $descricao"
-    echo "   Código: $codigo"
-    echo "   Resultado:"
-    echo "$codigo" | ./pylite
-    echo "   Status: $([[ $? -eq 0 ]] && echo "✅ SUCESSO" || echo "❌ ERRO")"
-    echo ""
-}
+1) Compilar e rodar um teste específico:
+   gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o test_if.out
+   ./test_if.out
 
-# Testes básicos
-testar "x = 5" "Atribuição simples"
-testar "result = 10 + 20" "Expressão aritmética"
-testar "flag = True" "Valor booleano"
-testar "check = x == y" "Comparação"
-testar "value = (5 + 3) * 2" "Expressão com parênteses"
-testar "print(\"Hello\")" "Comando print"
-testar "z = x and y" "Operador lógico"
+2) Rodar a suíte completa:
+   ./run_c_tests.sh
 
-echo "=== PARA TESTAR MANUALMENTE ==="
-echo ""
-echo "💡 Comandos úteis:"
-echo ""
-echo "1. Teste rápido:"
-echo "   echo \"seu_codigo_aqui\" | ./pylite"
-echo ""
-echo "2. Teste interativo:"
-echo "   ./pylite"
-echo "   (digite código e pressione Ctrl+D)"
-echo ""
-echo "3. Teste de arquivo:"
-echo "   ./pylite < nome_do_arquivo.py"
-echo ""
-echo "4. Criar e testar arquivo:"
-echo "   echo \"x = 10\" > meu_teste.py"
-echo "   ./pylite < meu_teste.py"
-echo ""
-echo "5. Menu interativo:"
-echo "   ./teste_manual.sh"
+3) Validar erros de compilação:
+   ./test_c_errors.sh
+
+4) Criar e executar um teste rápido:
+   cat > /tmp/quick.c <<'EOF'
+   #include <stdio.h>
+   int main(void){ printf("quick\n"); return 0; }
+   EOF
+   gcc -Wall -Wextra -std=c11 /tmp/quick.c -o /tmp/quick.out && /tmp/quick.out
+
+TXT
