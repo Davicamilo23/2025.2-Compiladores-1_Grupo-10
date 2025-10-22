@@ -22,19 +22,19 @@
 ### **Casos de Teste Python**
 | Arquivo | Funcionalidade Testada | Status |
 |---------|------------------------|--------|
-| `tests/test_simple.py` | Atribuições básicas | ✅ Passa |
-| `tests/test_print.py` | Comando print | ✅ Passa |
-| `tests/test_basic.py` | Comentários e expressões | ⚠️ Limitado |
-| `tests/test_if.py` | Estruturas condicionais | ❌ Não funciona |
-| `tests/test_while.py` | Loops | ❌ Não funciona |
-| `tests/test_function.py` | Definições de função | ❌ Não funciona |
-| `tests/test_error.py` | Casos de erro | ✅ Detecta erros |
+| `tests/test_simple.c` | Atribuições básicas | ✅ Passa |
+| `tests/test_print.c` | Comando print | ✅ Passa |
+| `tests/test_basic.c` | Comentários e expressões | ⚠️ Limitado |
+| `tests/test_if.c` | Estruturas condicionais | ❌ Não funciona |
+| `tests/test_while.c` | Loops | ❌ Não funciona |
+| `tests/test_function.c` | Definições de função | ❌ Não funciona |
+| `tests/test_error.c` | Casos de erro | ✅ Detecta erros |
 
 ### **Scripts de Automação**
 | Arquivo | Funcionalidade | Uso |
 |---------|----------------|-----|
-| `run_tests.sh` | Bateria principal de testes | `./run_tests.sh` |
-| `test_errors.sh` | Testes de casos de erro | `./test_errors.sh` |
+| `run_c_tests.sh` | Bateria principal de testes | `./run_c_tests.sh` |
+| `test_c_errors.sh` | Testes de casos de erro | `./test_c_errors.sh` |
 | `teste_manual.sh` | Menu interativo | `./teste_manual.sh` |
 | `exemplos_teste.sh` | Exemplos com feedback | `./exemplos_teste.sh` |
 
@@ -76,15 +76,15 @@
 │   └── src/main.c
 ├── 🧪 Testes
 │   ├── tests/
-│   │   ├── test_simple.py
-│   │   ├── test_print.py
-│   │   ├── test_basic.py
-│   │   ├── test_if.py
-│   │   ├── test_while.py
-│   │   ├── test_function.py
-│   │   └── test_error.py
-│   ├── run_tests.sh
-│   ├── test_errors.sh
+│   │   ├── test_simple.c
+│   │   ├── test_print.c
+│   │   ├── test_basic.c
+│   │   ├── test_if.c
+│   │   ├── test_while.c
+│   │   ├── test_function.c
+│   │   └── test_error.c
+│   ├── run_c_tests.sh
+│   ├── test_c_errors.sh
 │   ├── teste_manual.sh
 │   └── exemplos_teste.sh
 ├── 📚 Documentação
@@ -112,7 +112,7 @@
 
 ### **Para Testar**
 1. `README_TESTES.md` - Guia de testes
-2. `./run_tests.sh` - Executar testes
+2. `./run_c_tests.sh` - Executar testes
 3. `./teste_manual.sh` - Testes interativos
 
 ### **Para Documentar**
@@ -133,16 +133,16 @@
 ### **Comandos Úteis**
 ```bash
 # Ver todos os arquivos
-find . -name "*.md" -o -name "*.sh" -o -name "*.py" -o -name "*.l" -o -name "*.y"
+find . -name "*.md" -o -name "*.sh" -o -name "*.c" -o -name "*.l" -o -name "*.y"
 
 # Ver apenas testes
-ls tests/*.py *.sh
+ls tests/*.c *.sh
 
 # Ver apenas documentação
 ls *.md docs/
 
 # Ver arquivos modificados hoje
-find . -name "*.py" -o -name "*.sh" -o -name "*.md" | xargs ls -la
+find . -name "*.c" -o -name "*.sh" -o -name "*.md" | xargs ls -la
 ```
 
 ---

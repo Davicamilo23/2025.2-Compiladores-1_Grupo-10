@@ -1,4 +1,4 @@
-# 📋 Changelog - Compilador Python-like
+# 📋 Changelog - Compilador C para Python
 
 ## [Sprint 1] - 2025-09-13/14
 
@@ -10,17 +10,17 @@ Estabelecer base funcional do compilador com análise léxica e sintática bási
 ## ✅ **Adicionado**
 
 ### **Arquivos de Teste**
-- `tests/test_simple.py` - Testes de atribuições básicas
-- `tests/test_print.py` - Testes de comando print
-- `tests/test_basic.py` - Testes com comentários
-- `tests/test_if.py` - Estruturas condicionais (preparação)
-- `tests/test_while.py` - Loops (preparação)
-- `tests/test_function.py` - Definições de função (preparação)
-- `tests/test_error.py` - Casos de erro intencionais
+- `tests/test_simple.c` - Testes de atribuições básicas
+- `tests/test_print.c` - Testes de comando print
+- `tests/test_basic.c` - Testes com comentários
+- `tests/test_if.c` - Estruturas condicionais (preparação)
+- `tests/test_while.c` - Loops (preparação)
+- `tests/test_function.c` - Definições de função (preparação)
+- `tests/test_error.c` - Casos de erro intencionais
 
 ### **Scripts de Automação**
-- `run_tests.sh` - Bateria principal de testes
-- `test_errors.sh` - Testes de casos de erro
+- `run_c_tests.sh` - Bateria principal de testes
+- `test_c_errors.sh` - Testes de casos de erro
 - `teste_manual.sh` - Menu interativo para testes
 - `exemplos_teste.sh` - Exemplos com feedback visual
 
@@ -105,7 +105,7 @@ Estabelecer base funcional do compilador com análise léxica e sintática bási
 - `parser.y` - Modificado (C++ → C, união semântica)
 
 ### **Arquivos Criados**
-- 7 arquivos de teste (.py)
+- 7 arquivos de teste (.c)
 - 4 scripts de automação (.sh)
 - 3 arquivos de documentação (.md)
 

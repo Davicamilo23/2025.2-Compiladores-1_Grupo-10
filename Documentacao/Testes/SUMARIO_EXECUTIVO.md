@@ -1,6 +1,6 @@
 # 📊 Sumário Executivo - Sprint 1
 
-## Compilador Python-like com Flex & Bison
+## Compilador C para Python com Flex & Bison
 
 **Período:** 13-14 de Setembro de 2025  
 **Sprint:** 1  
@@ -125,7 +125,7 @@ Status:  ✅ ERRO DETECTADO CORRETAMENTE
 - `parser.y` - Analisador sintático (versão C funcional)
 
 ### **Suíte de Testes**
-- 7 arquivos de teste Python (.py)
+- 7 arquivos de teste Python (.c)
 - 4 scripts de automação (.sh)
 - Cobertura completa das funcionalidades atuais
 

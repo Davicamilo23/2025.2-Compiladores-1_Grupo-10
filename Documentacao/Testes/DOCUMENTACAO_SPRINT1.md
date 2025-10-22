@@ -1,6 +1,6 @@
 # 📖 Documentação de Ajustes e Testes - Sprint 1
 
-## Compilador Python-like (Flex & Bison)
+## Compilador C para Python (Flex & Bison)
 
 **Data:** 13-14 de Setembro de 2025  
 **Branch:** Testes  

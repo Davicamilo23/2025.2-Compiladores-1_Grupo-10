@@ -5,6 +5,12 @@ nav:
   - Home: index.md
   - Sobre o Projeto: sobre.md
   - Tokens e Estrutura: linguagem-fonte-c.md
+  - Sprint 1:
+    - Sumário: Documentacao/Testes/SUMARIO_EXECUTIVO.md
+    - Detalhes Técnicos: Documentacao/Testes/DOCUMENTACAO_SPRINT1.md
+    - Changelog: Documentacao/Testes/CHANGELOG.md
+  - Testes:
+    - Guia: Documentacao/Testes/README_TESTES.md
   - Atas:
     - Reunião 01: atas/ata01.md
     - Reunião 02: atas/ata02.md
