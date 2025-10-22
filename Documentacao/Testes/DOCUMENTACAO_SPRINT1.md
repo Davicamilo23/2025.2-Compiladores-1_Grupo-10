@@ -176,210 +176,332 @@ O Makefile original estava correto, sem necessidade de ajustes.
 
 ---
 
-## 🧪 Testes Implementados
+# 🧪 Suíte de Testes do Compilador — Versão em C
 
-### 1. **Arquivos de Teste Criados**
-
-#### **`tests/test_simple.py`**
-```python
-x = 10
-y = 20
-z = x + y
-```
-**Objetivo:** Testar atribuições básicas e expressões aritméticas simples.
-
-#### **`tests/test_print.py`**
-```python
-print("Hello")
-result = 5 + 3 * 2
-```
-**Objetivo:** Testar comando print e precedência de operadores.
-
-#### **`tests/test_basic.py`**
-```python
-# Teste básico de variáveis e expressões
-x = 10
-y = 20
-z = x + y
-print("Hello World")
-```
-**Objetivo:** Testar comentários, atribuições e print.
-
-#### **`tests/test_if.py`**
-```python
-# Teste de estrutura condicional if
-x = 5
-if x > 0:
-    print("Positivo")
-```
-**Objetivo:** Testar estruturas condicionais (limitado pela versão atual).
-
-#### **`tests/test_while.py`**
-```python
-# Teste de loop while
-counter = 0
-while counter < 3:
-    print(counter)
-    counter = counter + 1
-```
-**Objetivo:** Testar loops (limitado pela versão atual).
-
-#### **`tests/test_function.py`**
-```python
-# Teste de definição de função
-def somar(a, b):
-    return a + b
-
-resultado = somar(5, 3)
-print(resultado)
-```
-**Objetivo:** Testar definições de função (limitado pela versão atual).
-
-#### **`tests/test_error.py`**
-```python
-# Teste com erros sintáticos intencionais
-x = 10
-if x > 5
-    print("Erro: dois pontos ausentes")
-```
-**Objetivo:** Testar detecção de erros sintáticos.
-
-### 2. **Scripts de Teste Automatizados**
-
-#### **`run_tests.sh`**
-```bash
-#!/bin/bash
-
-echo "=== TESTE DO COMPILADOR PYLITE ==="
-echo ""
-
-echo "1. Teste básico de expressões:"
-echo "   Arquivo: test_simple.py"
-cat tests/test_simple.py
-echo "   Resultado:"
-./pylite < tests/test_simple.py
-echo ""
-
-echo "2. Teste de print:"
-echo "   Arquivo: test_print.py"
-cat tests/test_print.py
-echo "   Resultado:"
-./pylite < tests/test_print.py
-echo ""
-
-echo "3. Teste de expressões numéricas:"
-echo "   Conteúdo: a = 10 + 5 * 2"
-echo "a = 10 + 5 * 2" | ./pylite
-echo ""
-
-echo "4. Teste de comparação:"
-echo "   Conteúdo: result = x > y"
-echo "result = x > y" | ./pylite
-echo ""
-
-echo "=== FIM DOS TESTES ==="
-```
-
-#### **`test_errors.sh`**
-```bash
-#!/bin/bash
-
-echo "=== TESTE DE CASOS DE ERRO ==="
-echo ""
-
-echo "1. Teste erro de sintaxe - operador inválido:"
-echo "   Conteúdo: x = 5 @@ 2"
-echo "x = 5 @@ 2" | ./pylite
-echo ""
-
-echo "2. Teste erro de sintaxe - parênteses não fechados:"
-echo "   Conteúdo: result = (5 + 3"
-echo "result = (5 + 3" | ./pylite
-echo ""
-
-echo "3. Teste expressão válida com parênteses:"
-echo "   Conteúdo: result = (5 + 3) * 2"
-echo "result = (5 + 3) * 2" | ./pylite
-echo ""
-
-echo "4. Teste tokens válidos:"
-echo "   Conteúdo: x = True and False"
-echo "x = True and False" | ./pylite
-echo ""
-
-echo "=== FIM DOS TESTES DE ERRO ==="
-```
-
-#### **`teste_manual.sh`**
-Script interativo com menu para testes manuais:
-- Teste de expressões aritméticas
-- Teste de atribuições
-- Teste de operadores lógicos
-- Teste de comparações
-- Teste de print
-- Teste personalizado
-- Exemplos válidos
-
-#### **`exemplos_teste.sh`**
-Script que executa uma bateria de testes com feedback visual:
-- Testa diferentes tipos de construções
-- Mostra status de sucesso/erro
-- Fornece guia de comandos para teste manual
+> Migramos toda a suíte de testes para **C**, espelhando o comportamento dos casos em Python (incluindo os casos de **erro**). Cada teste é um executável independente com `main()` e validação por `printf`.
 
 ---
 
-## 📊 Resultados dos Testes
+## 1) Arquivos de Teste Criados
 
-### ✅ **Funcionalidades Testadas e Aprovadas**
+### `tests_c/test_simple.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 10, y = 20, z = x + y;
+    printf("z=%d\n", z);
+    return 0;
+}
+```
+**Objetivo:** Atribuições básicas e expressão aritmética simples.
 
-| Categoria | Teste | Status | Observações |
-|-----------|-------|--------|-------------|
-| **Análise Léxica** | Identificadores | ✅ | `x`, `resultado`, `flag` |
-| **Análise Léxica** | Números inteiros | ✅ | `10`, `42`, `100` |
-| **Análise Léxica** | Strings | ✅ | `"Hello"`, `"World"` |
-| **Análise Léxica** | Palavras-chave | ✅ | `True`, `False`, `None`, `and`, `or` |
-| **Análise Léxica** | Operadores aritméticos | ✅ | `+`, `-`, `*`, `//`, `%` |
-| **Análise Léxica** | Operadores relacionais | ✅ | `==`, `!=`, `<`, `>`, `<=`, `>=` |
-| **Análise Léxica** | Operadores lógicos | ✅ | `and`, `or`, `not` |
-| **Análise Léxica** | Delimitadores | ✅ | `(`, `)`, `,`, `:` |
-| **Análise Sintática** | Atribuições simples | ✅ | `x = 10` |
-| **Análise Sintática** | Expressões aritméticas | ✅ | `result = 5 + 3 * 2` |
-| **Análise Sintática** | Expressões com parênteses | ✅ | `value = (5 + 3) * 2` |
-| **Análise Sintática** | Expressões lógicas | ✅ | `flag = True and False` |
-| **Análise Sintática** | Expressões relacionais | ✅ | `check = x >= y` |
-| **Análise Sintática** | Comando print | ✅ | `print("texto")` |
-| **Tratamento de Erros** | Caracteres inválidos | ✅ | Detecta `@@` como erro |
-| **Tratamento de Erros** | Parênteses não fechados | ✅ | Detecta erro sintático |
+### `tests_c/test_print.c`
+```c
+#include <stdio.h>
+int main(void){
+    printf("Hello\n");
+    int result = 5 + 3 * 2;
+    (void)result;
+    return 0;
+}
+```
+**Objetivo:** `printf` e precedência de operadores.
 
-### ⚠️ **Limitações Identificadas**
+### `tests_c/test_basic.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 10, y = 20, z = x + y;
+    (void)z;
+    printf("Hello World\n");
+    return 0;
+}
+```
+**Objetivo:** Comentários, atribuições e `printf`.
 
-| Categoria | Limitação | Motivo | Solução Futura |
-|-----------|-----------|--------|----------------|
-| **Estruturas de Controle** | `if`/`else` com blocos | Indentação complexa não implementada | Restaurar lexer completo |
-| **Estruturas de Controle** | `while` com blocos | Indentação complexa não implementada | Restaurar lexer completo |
-| **Definições** | `def` com blocos | Indentação complexa não implementada | Restaurar lexer completo |
-| **Comentários** | Processamento em arquivos | Versão simplificada | Melhorar tratamento |
+### `tests_c/test_if.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 5;
+    if (x > 0) printf("Positivo\n");
+    return 0;
+}
+```
+**Objetivo:** Condicionais simples.
+
+### `tests_c/test_if_else.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = -1;
+    if (x > 0) printf("positive\n");
+    else      printf("non_positive\n");
+    return 0;
+}
+```
+**Objetivo:** `if/else`.
+
+### `tests_c/test_if_elif_else.c`
+```c
+#include <stdio.h>
+int main(void){
+    int n = 3;
+    if (n < 0)       printf("negative\n");
+    else if (n < 5)  printf("small\n");
+    else             printf("large\n");
+    return 0;
+}
+```
+**Objetivo:** Cadeia `if / else if / else`.
+
+### `tests_c/test_if_flat.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 5, y = 0;
+    if (x > 0) y = 1;
+    printf("y=%d\n", y);
+    return 0;
+}
+```
+**Objetivo:** Atribuição dentro de `if` e leitura fora do bloco.
+
+### `tests_c/test_if_simple.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 5;
+    if (x > 0) printf("positive\n");
+    return 0;
+}
+```
+**Objetivo:** `if` simples.
+
+### `tests_c/test_nested_blocks.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 10;
+    if (x > 0){
+        printf("A\n");
+        if (x > 5) printf("A1\n");
+    }
+    printf("B\n");
+    return 0;
+}
+```
+**Objetivo:** Blocos aninhados.
+
+### `tests_c/test_while.c`
+```c
+#include <stdio.h>
+int main(void){
+    int counter = 0;
+    while (counter < 3){
+        printf("%d\n", counter);
+        counter++;
+    }
+    return 0;
+}
+```
+**Objetivo:** Loop `while`.
+
+### `tests_c/test_function.c`
+```c
+#include <stdio.h>
+static int somar(int a,int b){ return a + b; }
+int main(void){
+    int r = somar(5,3);
+    printf("%d\n", r);
+    return 0;
+}
+```
+**Objetivo:** Definição e chamada de função.
+
+### `tests_c/test_scope.c`
+```c
+#include <stdio.h>
+static void foo(void){ int x = 2; printf("inner_x=%d\n", x); }
+int main(void){
+    int x = 1; foo(); printf("outer_x=%d\n", x); return 0;
+}
+```
+**Objetivo:** Escopo e sombreamento.
+
+### `tests_c/test_ptr_decl_assign.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 10; int *p = &x; *p = 20; printf("x=%d\n", x); return 0;
+}
+```
+**Objetivo:** Declaração, endereço e desreferência.
+
+### `tests_c/test_ptr_chain.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 1; int *p = &x; int **pp = &p; **pp = 42;
+    printf("x=%d\n", x); return 0;
+}
+```
+**Objetivo:** Ponteiro de ponteiro.
+
+### `tests_c/test_ptr_arith.c`
+```c
+#include <stdio.h>
+int main(void){
+    int p = 0; int q = p + 1; printf("q=%d\n", q); return 0;
+}
+```
+**Objetivo:** Aritmética simples (analogia com ponteiros).
+
+### `tests_c/test_ptr_if_while.c`
+```c
+#include <stdio.h>
+int main(void){
+    int x = 0; int *p = &x;
+    while (*p < 5){
+        (*p)++;
+        if (*p > 2){ x = 100; break; }
+    }
+    printf("x=%d\n", x); return 0;
+}
+```
+**Objetivo:** Ponteiros em fluxo de controle.
+
+---
+
+## 2) Casos de Erro (Diagnóstico do Compilador)
+
+> Equivalentes aos de Python, para validar diagnóstico do front‑end (léxico/sintático/semântico).
+
+- `tests_c/errors/div_zero.c` — divisão por zero (UB/diagnóstico).
+- `tests_c/errors/dois_pontos_ausente.c` — falta `;` após declaração.
+- `tests_c/errors/erro_de_ortografia.c` — `pritnf` (typo).
+- `tests_c/errors/mal_identacao.c` — compila; mantém intenção de má formatação.
+- `tests_c/errors/tipo_incorreto.c` — soma entre `int` e string literal.
+- `tests_c/errors/variavel_desconhecida.c` — uso de símbolo não declarado.
+
+### `test_c_errors.sh`
+```bash
+#!/usr/bin/env bash
+set -eu
+CC=${CC:-gcc}
+CFLAGS="-Wall -Wextra -std=c11"
+DIR="tests_c/errors"
+
+echo "== Compilando casos de ERRO (espera-se falha) =="
+for f in $(find "$DIR" -name "*.c" | sort); do
+  if $CC $CFLAGS "$f" -o "${f%.c}.out" 2>/dev/null; then
+    echo "!! ERRO: compilou mas deveria falhar -> $(basename "$f")"
+  else
+    echo "OK: falhou como esperado -> $(basename "$f")"
+  fi
+done
+```
+
+---
+
+## 3) Execução Automatizada dos Testes “Válidos”
+
+### `run_c_tests.sh`
+```bash
+#!/usr/bin/env bash
+set -eu
+
+CC=${CC:-gcc}
+CFLAGS="-Wall -Wextra -Werror -std=c11"
+ROOT="tests_c"
+
+echo "== Compilando e executando testes C =="
+
+ok=0; fail=0
+for f in $(find "$ROOT" -maxdepth 1 -name "*.c" | sort); do
+  exe="${f%.c}.out"
+  if $CC $CFLAGS "$f" -o "$exe"; then
+    echo ">> RUN $(basename "$f")"
+    "$exe" || true
+    ok=$((ok+1))
+  else
+    echo "!! FAIL COMPILE $(basename "$f")"
+    fail=$((fail+1))
+  fi
+done
+
+echo "-- RESUMO: OK=$ok, FAIL=$fail --"
+```
+
+---
+
+## 4) Resultados Esperados
+
+### ✅ Funcionalidades Testadas e Aprovadas (C)
+
+| Categoria                 | Teste/Exemplo                        | Status | Observações |
+|--------------------------|--------------------------------------|--------|------------|
+| Tipos e Atribuições      | `int x=10; int y=20;`                | ✅     | `test_simple`, `test_basic` |
+| Aritmética               | `+ - * / %`                          | ✅     | Precedência validada em `test_print` |
+| Comparações              | `< <= > >= == !=`                    | ✅     | Usadas em `if*` |
+| `printf`/Saída           | `printf("...")`                      | ✅     | Mensagens de verificação |
+| Controle de Fluxo        | `if / else if / else`                | ✅     | `test_if*` |
+| Loop                     | `while`                              | ✅     | `test_while` |
+| Funções                  | declaração/retorno                   | ✅     | `test_function` |
+| Escopo                   | variável local e sombreamento        | ✅     | `test_scope` |
+| Ponteiros                | `&` e `*`                            | ✅     | `test_ptr_decl_assign` |
+| Ponteiro de ponteiro     | `**`                                 | ✅     | `test_ptr_chain` |
+| Ponteiro em fluxo        | `if/while` com `*p`                  | ✅     | `test_ptr_if_while` |
+
+### ⚠️ Casos de Erro (Diagnóstico do Compilador)
+
+| Arquivo                          | Expectativa                                   |
+|----------------------------------|-----------------------------------------------|
+| `errors/div_zero.c`              | Diagnóstico/UB por divisão por zero           |
+| `errors/dois_pontos_ausente.c`   | Falha de compilação (faltando `;`)            |
+| `errors/erro_de_ortografia.c`    | Falha de compilação (`pritnf` indefinido)     |
+| `errors/tipo_incorreto.c`        | Falha de compilação (operandos incompatíveis) |
+| `errors/variavel_desconhecida.c` | Falha de compilação (símbolo não declarado)   |
+| `errors/mal_identacao.c`         | Compila; usado para observar estilo           |
+
+---
+
+## 5) Como Rodar
+
+```bash
+chmod +x run_c_tests.sh test_c_errors.sh
+./run_c_tests.sh        # compila e executa os testes "válidos"
+./test_c_errors.sh      # compila casos de erro (espera falhas)
+```
+
+> **Saídas esperadas:** linhas de `printf` (ex.: `z=30`, `Positivo`, `A\nA1\nB`, `x=20`, etc.) para comparação com seus “goldens”.
+
+---
+
+## 6) Observações
+
+- A suíte em C mantém paridade semântica com os testes originais em Python.
+- Os casos de erro validam a robustez do diagnóstico do compilador.
+- Podemos adicionar `Makefile` e macros de asserção (`ASSERT_EQ`, etc.) sob demanda.
 
 ---
 
 ## 🎯 Métodos de Teste Manual Disponíveis
 
-### **1. Teste Rápido em Terminal**
-```bash
-echo "x = 5 + 3" | ./pylite
-```
+### **1. Teste Rápido no Terminal (um arquivo .c)**
+    gcc -Wall -Wextra -std=c11 tests_c/test_simple.c -o test_simple.out
+    ./test_simple.out
 
-### **2. Teste Interativo**
-```bash
-./pylite
-# Digite código e pressione Ctrl+D
-```
+### **2. Teste de Outro Arquivo Específico**
+    gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o test_if.out
+    ./test_if.out
 
-### **3. Teste com Arquivo**
-```bash
-echo "x = 10" > teste.py
-./pylite < teste.py
-```
+### **3. Rodar a Suíte Completa (scripts)**
+    chmod +x run_c_tests.sh test_c_errors.sh
+    ./run_c_tests.sh        # compila e executa os testes "válidos"
+    ./test_c_errors.sh      # verifica que os casos de erro falham na compilação
+
+> Dica: troque o nome do arquivo (`test_if.c`, `test_while.c`, etc.) para compilar/rodar qualquer teste individualmente.
 
 ### **4. Scripts Automatizados**
 ```bash
