@@ -1,73 +1,33 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "=== MENU DE TESTES MANUAIS ==="
-echo ""
-echo "Escolha o tipo de teste:"
-echo "1. Teste de expressões aritméticas"
-echo "2. Teste de atribuições"
-echo "3. Teste de operadores lógicos"
-echo "4. Teste de comparações"
-echo "5. Teste de print"
-echo "6. Teste personalizado (você digita)"
-echo "7. Mostrar exemplos válidos"
-echo "0. Sair"
-echo ""
+PS3="Selecione uma opção (0 para sair): "
+options=(
+  "Compilar+rodar test_simple.c"
+  "Compilar+rodar test_if.c"
+  "Compilar+rodar test_while.c"
+  "Compilar+rodar test_ptr_decl_assign.c"
+  "Compilar+rodar test_ptr_chain.c"
+  "Executar suíte completa (run_c_tests.sh)"
+  "Validar casos de erro (test_c_errors.sh)"
+  "Criar e rodar teste rápido (quick.c)"
+)
 
-while true; do
-    read -p "Digite sua opção (0-7): " opcao
-    
-    case $opcao in
-        1)
-            echo "Testando: result = 10 + 5 * 2"
-            echo "result = 10 + 5 * 2" | ./pylite
-            echo ""
-            ;;
-        2)
-            echo "Testando: x = 42"
-            echo "x = 42" | ./pylite
-            echo ""
-            ;;
-        3)
-            echo "Testando: flag = True and False"
-            echo "flag = True and False" | ./pylite
-            echo ""
-            ;;
-        4)
-            echo "Testando: check = x > y"
-            echo "check = x > y" | ./pylite
-            echo ""
-            ;;
-        5)
-            echo "Testando: print(\"Hello World\")"
-            echo 'print("Hello World")' | ./pylite
-            echo ""
-            ;;
-        6)
-            echo "Digite seu código Python (termine com Ctrl+D):"
-            ./pylite
-            echo ""
-            ;;
-        7)
-            echo "=== EXEMPLOS QUE FUNCIONAM ==="
-            echo "• x = 10"
-            echo "• result = 5 + 3 * 2"
-            echo "• flag = True or False"
-            echo "• check = x >= y"
-            echo "• print(\"texto\")"
-            echo "• valor = (10 + 5) * 2"
-            echo ""
-            echo "=== EXEMPLOS QUE NÃO FUNCIONAM (ainda) ==="
-            echo "• if x > 0: (precisa de blocos)"
-            echo "• def funcao(): (precisa de blocos)"
-            echo "• while x < 10: (precisa de blocos)"
-            echo ""
-            ;;
-        0)
-            echo "Saindo..."
-            break
-            ;;
-        *)
-            echo "Opção inválida! Digite 0-7"
-            ;;
-    esac
+select opt in "${options[@]}" "Sair"; do
+  case $REPLY in
+    1) gcc -Wall -Wextra -std=c11 tests_c/test_simple.c -o tests_c/test_simple.out && tests_c/test_simple.out ;;
+    2) gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o tests_c/test_if.out && tests_c/test_if.out ;;
+    3) gcc -Wall -Wextra -std=c11 tests_c/test_while.c -o tests_c/test_while.out && tests_c/test_while.out ;;
+    4) gcc -Wall -Wextra -std=c11 tests_c/test_ptr_decl_assign.c -o tests_c/test_ptr_decl_assign.out && tests_c/test_ptr_decl_assign.out ;;
+    5) gcc -Wall -Wextra -std=c11 tests_c/test_ptr_chain.c -o tests_c/test_ptr_chain.out && tests_c/test_ptr_chain.out ;;
+    6) ./run_c_tests.sh ;;
+    7) ./test_c_errors.sh ;;
+    8) cat > /tmp/quick.c <<'EOF'
+#include <stdio.h>
+int main(void){ printf("quick\n"); return 0; }
+EOF
+       gcc -Wall -Wextra -std=c11 /tmp/quick.c -o /tmp/quick.out && /tmp/quick.out ;;
+    9) echo "Saindo..."; break ;;
+    *) echo "Opção inválida!";;
+  esac
 done
