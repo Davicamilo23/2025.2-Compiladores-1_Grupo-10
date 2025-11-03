@@ -50,6 +50,7 @@ STRING   "([^\\\"\n]|{ESC})*"
 
 /* ----------- Palavras-chave e tipos ----------- */
 "int"               { return T_INT; }
+"float"             { return T_FLOAT; }
 "char"              { return T_CHAR; }
 "void"              { return T_VOID; }
 "if"                { return IF; }
@@ -98,6 +99,7 @@ STRING   "([^\\\"\n]|{ESC})*"
 "]"                 { return RBRACK; }
 
 /* ----------- Literais ----------- */
+{DIG}+"."{DIG}+     { yylval.s = mydup(yytext); return FCONST; }  /* float literal */
 {DIG}+              { yylval.s = mydup(yytext); return ICONST; }
 {STRING}            { yylval.s = mydup(yytext); return SCONST; }
 {CHAR}              { yylval.s = mydup(yytext); return SCONST; }  /* trata char como string simples */
