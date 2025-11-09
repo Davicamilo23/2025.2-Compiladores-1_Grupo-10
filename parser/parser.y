@@ -58,7 +58,7 @@
 
 /* Tokens do lexer */
 %token T_INT T_CHAR T_VOID T_NULL T_FLOAT
-%token IF ELSE WHILE RETURN
+%token IF ELSE WHILE FOR RETURN
 %token ANDAND OROR NOT
 %token EQ NE LT LE GT GE
 %token AMP STAR PLUS MINUS SLASH PERCENT
@@ -222,6 +222,23 @@ selection_stmt
 
 iteration_stmt
   : WHILE LPAREN expression RPAREN stmt
+  | FOR LPAREN for_init_opt SEMI for_condition_opt SEMI for_increment_opt RPAREN stmt
+  ;
+
+for_init_opt
+  : /* vazio */
+  | expression
+  | declaration
+  ;
+
+for_condition_opt
+  : /* vazio */
+  | expression
+  ;
+
+for_increment_opt
+  : /* vazio */
+  | expression
   ;
 
 jump_stmt
