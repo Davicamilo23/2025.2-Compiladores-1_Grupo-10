@@ -25,7 +25,7 @@
 
   /* Variável global para rastrear o tipo atual da declaração */
   static Tipo tipo_atual = TIPO_DESCONHECIDO;
-  
+
   /* Função auxiliar para converter string de tipo para enum Tipo */
   static Tipo stringParaTipo(const char* tipo_str) {
     if (strcmp(tipo_str, "int") == 0) return TIPO_INT;
@@ -34,17 +34,120 @@
     if (strcmp(tipo_str, "void") == 0) return TIPO_VOID;
     return TIPO_DESCONHECIDO;
   }
-  
+
   /* Função para verificar compatibilidade de tipos */
   static int tiposCompativeis(Tipo tipo1, Tipo tipo2) {
     if (tipo1 == tipo2) return 1;
-    // int e float são parcialmente compatíveis (com warning)
+    /* int e float são parcialmente compatíveis (com warning) */
     if ((tipo1 == TIPO_INT && tipo2 == TIPO_FLOAT) ||
         (tipo1 == TIPO_FLOAT && tipo2 == TIPO_INT)) {
         printf("Aviso: Conversão implícita entre int e float.\n");
         return 1;
     }
     return 0;
+  }
+
+  /* Pilha de escopos só para detectar redeclaração no MESMO escopo.
+     Não substitui a tabela global (buscarSimbolo/inserirSimboloTipado). */
+  typedef struct DeclNode {
+    char *nome;
+    int   is_array;
+    struct DeclNode *next;
+  } DeclNode;
+
+  typedef struct Scope {
+    DeclNode *head;
+    struct Scope *prev;
+  } Scope;
+
+  static Scope *escopo_atual = NULL;
+
+  static char* sdup(const char* s){
+    size_t n = strlen(s);
+    char* p = (char*)malloc(n+1);
+    if(!p){ perror("malloc"); exit(1); }
+    memcpy(p, s, n+1);
+    return p;
+  }
+
+  static void ensure_global_scope(void){
+    if(!escopo_atual){
+      escopo_atual = (Scope*)calloc(1, sizeof(Scope));
+      if(!escopo_atual){ perror("calloc"); exit(1); }
+    }
+  }
+
+  static void enter_scope(void){
+    Scope* s = (Scope*)calloc(1, sizeof(Scope));
+    if(!s){ perror("calloc"); exit(1); }
+    s->prev = escopo_atual;
+    escopo_atual = s;
+  }
+
+  static void leave_scope(void){
+    if(!escopo_atual) return;
+    DeclNode* it = escopo_atual->head;
+    while(it){
+      DeclNode* nx = it->next;
+      free(it->nome);
+      free(it);
+      it = nx;
+    }
+    Scope* prev = escopo_atual->prev;
+    free(escopo_atual);
+    escopo_atual = prev;
+  }
+
+  static int scope_has(const char* nome){
+    if(!escopo_atual) return 0;
+    for(DeclNode* it = escopo_atual->head; it; it = it->next){
+      if(strcmp(it->nome, nome)==0) return 1;
+    }
+    return 0;
+  }
+
+  // registra no escopo atual para evitar redeclaração no mesmo escopo 
+  static int scope_add(const char* nome, int is_array){
+    ensure_global_scope();
+    if(scope_has(nome)) return 0;
+    DeclNode* n = (DeclNode*)calloc(1, sizeof(DeclNode));
+    if(!n){ perror("calloc"); exit(1); }
+    n->nome = sdup(nome);
+    n->is_array = is_array;
+    n->next = escopo_atual->head;
+    escopo_atual->head = n;
+    return 1;
+  }
+
+  /* Marca último IDENT e se é array para validar base[index] */
+  static char* ultimo_ident = NULL;
+  static int   ultimo_ident_is_array = 0;
+
+  static void marcar_ident(const char* nome, int is_array){
+    if(ultimo_ident){ free(ultimo_ident); ultimo_ident=NULL; }
+    ultimo_ident = sdup(nome);
+    ultimo_ident_is_array = is_array;
+  }
+  static void limpar_ident(void){
+    if(ultimo_ident){ free(ultimo_ident); ultimo_ident=NULL; }
+    ultimo_ident_is_array = 0;
+  }
+
+  extern const char* tipoParaString(Tipo); /* da tabela */
+
+  static void verifica_indexacao(Tipo idx_tipo, int linha){
+    if(idx_tipo != TIPO_INT){
+      fprintf(stderr,
+        "Erro semântico (linha %d): índice de array deve ser 'int' (recebido '%s').\n",
+        linha, tipoParaString(idx_tipo));
+    }
+    if(!ultimo_ident || !ultimo_ident_is_array){
+      const char* base = ultimo_ident ? ultimo_ident : "<expressão>";
+      fprintf(stderr,
+        "Erro semântico (linha %d): '%s' não é um array; uso de indexação inválido.\n",
+        linha, base);
+    }
+    limpar_ident(); /* consome o contexto após base[index] */
   }
 %}
 
@@ -140,19 +243,33 @@ init_declarator
   ;
 
 declarator
-  : pointer_opt IDENT                        
-    { 
-        // Insere o símbolo na tabela com tipo
-        inserirSimboloTipado($2, CATEGORIA_VARIAVEL, tipo_atual, $1);
-        show_decl(tipoParaString(tipo_atual), $2, $1); 
-        free($2); 
+  : pointer_opt IDENT
+    {
+        /* [SEM] redeclaração no MESMO escopo */
+        ensure_global_scope();
+        if(!scope_add($2, 0)){
+          fprintf(stderr,
+            "Erro semântico (linha %d): redeclaração de '%s' no mesmo escopo.\n",
+            yylineno, $2);
+        } else {
+          inserirSimboloTipado($2, CATEGORIA_VARIAVEL, tipo_atual, $1);
+          show_decl(tipoParaString(tipo_atual), $2, $1);
+        }
+        free($2);
     }
-  | pointer_opt IDENT LBRACK ICONST RBRACK   
-    { 
-        // Insere array na tabela
-        inserirSimboloTipado($2, CATEGORIA_ARRAY, tipo_atual, $1);
-        show_decl("/* array */", $2, $1); 
-        free($2); 
+  | pointer_opt IDENT LBRACK ICONST RBRACK
+    {
+        /* [SEM] redeclaração no MESMO escopo (array) */
+        ensure_global_scope();
+        if(!scope_add($2, 1)){
+          fprintf(stderr,
+            "Erro semântico (linha %d): redeclaração de '%s' no mesmo escopo.\n",
+            yylineno, $2);
+        } else {
+          inserirSimboloTipado($2, CATEGORIA_ARRAY, tipo_atual, $1);
+          show_decl("/* array */", $2, $1);
+        }
+        free($2);
     }
   ;
 
@@ -194,7 +311,9 @@ param_decl
 /* ---------- Blocos e statements (C com chaves) ---------- */
 
 compound_stmt
-  : LBRACE stmt_list_opt RBRACE
+  : LBRACE   { enter_scope(); }   /* [SEM] entra escopo */
+    stmt_list_opt
+    RBRACE   { leave_scope(); }   /* [SEM] sai escopo   */
   ;
 
 stmt_list_opt
@@ -375,11 +494,17 @@ unary_expression
   ;
 
 postfix_expression
-  : primary_expression                                      { $$ = $1; }
-  | postfix_expression LBRACK expression RBRACK             { $$ = $1; /* tipo do elemento do array */ }
-  | postfix_expression LPAREN argument_expr_list_opt RPAREN { $$ = TIPO_DESCONHECIDO; /* depende da função */ }
-  | postfix_expression DOT IDENT                            { $$ = TIPO_DESCONHECIDO; /* depende do campo */ }
-  | postfix_expression ARROW IDENT                          { $$ = TIPO_DESCONHECIDO; /* depende do campo */ }
+  : primary_expression
+    { $$ = $1; }
+  | postfix_expression LBRACK expression RBRACK
+    {
+        /* [SEM] valida base[index] */
+        verifica_indexacao($3, yylineno);
+        $$ = $1; /* tipo do elemento, mantem comportamento atual */
+    }
+  | postfix_expression LPAREN argument_expr_list_opt RPAREN { $$ = TIPO_DESCONHECIDO; }
+  | postfix_expression DOT IDENT                            { $$ = TIPO_DESCONHECIDO; }
+  | postfix_expression ARROW IDENT                          { $$ = TIPO_DESCONHECIDO; }
   ;
 
 argument_expr_list_opt
@@ -395,42 +520,30 @@ argument_expr_list
 primary_expression
   : IDENT
     {
-        // Verifica se a variável foi declarada
+        /* Verifica se a variável foi declarada (na tabela global) */
         Simbolo *s = buscarSimbolo($1);
         if (s == NULL) {
             fprintf(stderr, "Erro semântico (linha %d): Variável '%s' não declarada.\n", yylineno, $1);
             $$ = TIPO_DESCONHECIDO;
+            limpar_ident();
         } else {
             // Verifica se foi inicializada (apenas warning)
             if (!s->inicializada) {
                 fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
             }
             $$ = s->tipo;
+            /* [SEM] marca IDENT p/ validação de indexação */
+            int is_array = (s->categoria == CATEGORIA_ARRAY);
+            marcar_ident($1, is_array);
         }
         free($1);
     }
-  | ICONST
-    {
-        $$ = TIPO_INT;
-    }
-  | FCONST
-    {
-        $$ = TIPO_FLOAT;
-        free($1);
-    }
-  | SCONST
-    {
-        $$ = TIPO_CHAR;  // strings e chars são tratados como char
-        free($1);
-    }
-  | T_NULL
-    {
-        $$ = TIPO_VOID;  // NULL tem tipo void*
-    }
+  | ICONST     { $$ = TIPO_INT;   limpar_ident(); }
+  | FCONST     { $$ = TIPO_FLOAT; free($1); limpar_ident(); }
+  | SCONST     { $$ = TIPO_CHAR;  free($1); limpar_ident(); } // strings e chars são tratados como char
+  | T_NULL     { $$ = TIPO_VOID;  limpar_ident(); } // NULL tem tipo void*
   | LPAREN expression RPAREN
-    {
-        $$ = $2;
-    }
+    { $$ = $2; limpar_ident(); }
   ;
 
 %%
