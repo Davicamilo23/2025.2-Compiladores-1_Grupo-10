@@ -1,44 +1,37 @@
-/* parser.y – Bison
- * Subconjunto de C com ponteiros, blocos, if/else, while, retorno e expressões.
- * Compatível com lexer C-like (chaves) ou com Python-like se você mapear blocos depois.
- * Mantém gramática da branch feat (C + ponteiros) e yyerror detalhado da main.
- */
+%define parse.error detailed
+%glr-parser
+
+%code requires {
+  #include "../src/tabela_simbolos/tipos.h"
+  typedef struct Ast Ast; 
+}
 
 %{
   #include <stdio.h>
   #include <stdlib.h>
   #include <string.h>
   #include "../src/tabela_simbolos/tabela.h"
+  #include "../src/tabela_simbolos/ast.h"
+  Ast* adicionarDeclaracao(Ast* programa, Ast* nova_decl);
 
   int yylex(void);
+  int ptr_level_atual = 0;
+
   void yyerror(const char* s);
 
-  /* Expostos pelo lexer (se implementar): */
   extern int yylineno;
   extern char *ultimo_token;
   extern char *ultimo_lexema;
+  extern Ast *ast_raiz;
 
-  /* helper para logar declarações de ponteiro (debug) */
   static void show_decl(const char* type, const char* name, int ptr_level) {
     printf("[DECL] %s %s (ptr_level=%d)\n", type, name, ptr_level);
   }
 
-  /* Variável global para rastrear o tipo atual da declaração */
   static Tipo tipo_atual = TIPO_DESCONHECIDO;
   
-  /* Função auxiliar para converter string de tipo para enum Tipo */
-  static Tipo stringParaTipo(const char* tipo_str) {
-    if (strcmp(tipo_str, "int") == 0) return TIPO_INT;
-    if (strcmp(tipo_str, "float") == 0) return TIPO_FLOAT;
-    if (strcmp(tipo_str, "char") == 0) return TIPO_CHAR;
-    if (strcmp(tipo_str, "void") == 0) return TIPO_VOID;
-    return TIPO_DESCONHECIDO;
-  }
-  
-  /* Função para verificar compatibilidade de tipos */
   static int tiposCompativeis(Tipo tipo1, Tipo tipo2) {
     if (tipo1 == tipo2) return 1;
-    // int e float são parcialmente compatíveis (com warning)
     if ((tipo1 == TIPO_INT && tipo2 == TIPO_FLOAT) ||
         (tipo1 == TIPO_FLOAT && tipo2 == TIPO_INT)) {
         printf("Aviso: Conversão implícita entre int e float.\n");
@@ -48,16 +41,17 @@
   }
 %}
 
-/* Tipos do yylval */
 %union {
   int    ival;
   char*  sval;
-  int    n;         /* níveis de ponteiro, etc. */
-  Tipo   tipo;      /* tipo da expressão */
+  int    n;
+  Tipo   tipo;
+  char*  nome_var;
+  Ast*   ast;
 }
 
-/* Tokens do lexer */
-%token T_INT T_CHAR T_VOID T_NULL T_FLOAT
+%token T_INT T_CHAR T_VOID T_NULL T_FLOAT T_STATIC
+
 %token IF ELSE WHILE FOR RETURN
 %token ANDAND OROR NOT
 %token EQ NE LT LE GT GE
@@ -67,10 +61,10 @@
 %token DOT ARROW
 %token COMMA SEMI COLON
 %token LPAREN RPAREN LBRACE RBRACE LBRACK RBRACK
-%token ICONST FCONST SCONST IDENT
+%token <ival> ICONST
+%token <sval> FCONST SCONST IDENT
 %token BADCHAR
 
-/* Precedência (da menor para a maior) */
 %left OROR
 %left ANDAND
 %left EQ NE
@@ -78,108 +72,151 @@
 %left PLUS MINUS
 %left STAR SLASH PERCENT
 %right NOT
-%right UAMP USTAR UMINUS        /* unários: &  *  - */
+%right UAMP USTAR UMINUS
 %right ASSIGN PLUSEQ MINUSEQ STAREQ SLASHEQ PERCENTEQ
 
 %type <n>    pointer_opt
-%type <sval> type_spec
-%type <sval> IDENT
-%type <ival> ICONST
-%type <sval> SCONST FCONST
+%type <nome_var> declarator
+
 %type <tipo> expression assignment_expression primary_expression
 %type <tipo> postfix_expression unary_expression multiplicative_expression
 %type <tipo> additive_expression relational_expression equality_expression
 %type <tipo> logical_and_expression logical_or_expression conditional_expression
+%type <tipo> type_spec
 
+%type <ast> translation_unit external_declaration function_definition
+%type <ast> compound_stmt stmt_list_opt
+%type <ast> stmt declaration declaration_nosemi expr_stmt
+%type <ast> initializer_value
+%type <ast> selection_stmt iteration_stmt jump_stmt
+%type <ast> init_declarator init_declarator_list
+%type <ast> expr_ast assignment_expr_ast primary_expr_ast
+%type <ast> additive_expr_ast multiplicative_expr_ast
+%type <ast> relational_expr_ast equality_expr_ast
+%type <ast> logical_and_expr_ast logical_or_expr_ast
+%type <ast> unary_expr_ast postfix_expr_ast
+%type <ast> argument_expr_list_opt argument_expr_list 
+%type <ast> param_list_opt param_list param_decl
+
+%start translation_unit
 %%
 
-/* ---------- Unidade de tradução (mantemos C, descartamos a "calculadora") ---------- */
 translation_unit
   : external_declaration
-  | translation_unit external_declaration
-  ;
-
-/* Adiciona uma regra especial para imprimir a tabela ao final */
-programa
-  : translation_unit
     {
-        printf("\n=== ANÁLISE CONCLUÍDA ===\n");
-        imprimirTabela();
+      $$ = criarPrograma($1, yylineno);
+      ast_raiz = $$;
+      printf("[AST] Programa criado\n");
+    }
+  | translation_unit external_declaration
+    {
+      if ($2 && $2->tipo != AST_VAZIO)
+        $$ = adicionarDeclaracao($1, $2);
+      else
+        $$ = $1;
+      ast_raiz = $$;
     }
   ;
 
 external_declaration
-  : function_def
-  | declaration SEMI
-  | SEMI
+  : declaration
+  | function_definition
+  | error SEMI { yyerrok; $$ = criarVazio(); }
   ;
 
-/* ---------- Declarações ---------- */
+function_definition
+  : storage_class_opt type_spec IDENT LPAREN param_list_opt RPAREN compound_stmt
+    {
+      printf("[FUNC] Definição de função '%s'\n", $3);
+      $$ = criarDeclaracaoFuncao(tipo_atual, $3, $5, $7, yylineno);
+      free($3);
+    }
+  ;
 
 declaration
+  : storage_class_opt type_spec declarator ASSIGN initializer_value SEMI
+    {
+        $$ = criarDeclaracaoVar(tipo_atual, $3, $5, yylineno);
+        printf("[INIT] Variável '%s' inicializada com valor\n", $3);
+    }
+  | storage_class_opt type_spec declarator SEMI
+    {
+        $$ = criarDeclaracaoVar(tipo_atual, $3, criarVazio(), yylineno);
+    }
+  ;
+declaration_nosemi
   : type_spec init_declarator_list
+    { $$ = $2; }
+  ;
+
+storage_class_opt
+  : /* vazio */        { /* sem modificador */ }
+  | T_STATIC           
+    { 
+      fprintf(stderr, "[YACC] Modificador 'static' detectado (será ignorado na geração de código)\n"); 
+    }
   ;
 
 type_spec
-  : T_INT     { $$ = "int"; tipo_atual = TIPO_INT; }
-  | T_FLOAT   { $$ = "float"; tipo_atual = TIPO_FLOAT; }
-  | T_CHAR    { $$ = "char"; tipo_atual = TIPO_CHAR; }
-  | T_VOID    { $$ = "void"; tipo_atual = TIPO_VOID; }
+  : T_INT
+      { $$ = TIPO_INT; tipo_atual = TIPO_INT; }
+  | T_FLOAT
+      { $$ = TIPO_FLOAT; tipo_atual = TIPO_FLOAT; }
+  | T_CHAR
+      { $$ = TIPO_CHAR; tipo_atual = TIPO_CHAR; }
+  | T_VOID
+      { $$ = TIPO_VOID; tipo_atual = TIPO_VOID; }
   ;
+
 
 init_declarator_list
   : init_declarator
+    { $$ = $1 ? $1 : criarVazio(); }
   | init_declarator_list COMMA init_declarator
+    { $$ = criarLista($1, $3 ? $3 : criarVazio()); }
   ;
 
 init_declarator
-  : declarator                               
-    { /* declaração sem inicialização - não marca como inicializada */ }
-  | declarator ASSIGN initializer            
-    { /* declaração com inicialização - será marcada no declarator */ }
+  : declarator
+    {
+      printf("[DECL] Variável '%s' declarada\n", $1);
+      $$ = criarDeclaracaoVar(tipo_atual, $1, NULL, yylineno);
+      free($1);
+    }
+  | declarator ASSIGN initializer_value
+    {
+      printf("[INIT] Variável '%s' inicializada com valor\n", $1);
+      marcarInicializada($1);
+      $$ = criarDeclaracaoVar(tipo_atual, $1, $3, yylineno);
+      free($1);
+    }
+  ;
+
+initializer_value
+  : expr_ast
+    { $$ = $1; }
   ;
 
 declarator
-  : pointer_opt IDENT                        
-    { 
-        // Insere o símbolo na tabela com tipo
-        inserirSimboloTipado($2, CATEGORIA_VARIAVEL, tipo_atual, $1);
-        show_decl(tipoParaString(tipo_atual), $2, $1); 
-        free($2); 
-    }
-  | pointer_opt IDENT LBRACK ICONST RBRACK   
-    { 
-        // Insere array na tabela
-        inserirSimboloTipado($2, CATEGORIA_ARRAY, tipo_atual, $1);
-        show_decl("/* array */", $2, $1); 
-        free($2); 
+  : pointer_opt IDENT
+    {
+        $$ = $2;
+        ptr_level_atual = $1;
+        printf("[DECL] %s (ptr_level=%d)\n", $2, ptr_level_atual);
     }
   ;
 
-/* ponteiro: zero ou mais '*' antes do identificador */
 pointer_opt
-  : /* vazio */      { $$ = 0; }
-  | pointer_opt STAR { $$ = $1 + 1; }
-  ;
-
-initializer
-  : assignment_expression
-  ;
-
-/* ---------- Função ---------- */
-
-function_def
-  : type_spec declarator_func compound_stmt
-  ;
-
-declarator_func
-  : IDENT LPAREN param_list_opt RPAREN       { /* nome da função em $1 */ free($1); }
-  | STAR declarator_func                     { /* ponteiro para função - aceita sintaticamente */ }
+  : /* vazio */
+      { $$ = 0; }
+  | STAR pointer_opt
+      { $$ = $2 + 1; }
   ;
 
 param_list_opt
-  : /* vazio */
-  | param_list
+  : /* vazio */     { $$ = criarVazio(); }
+  | T_VOID          { $$ = criarVazio(); }  
+  | param_list      { $$ = $1; }
   ;
 
 param_list
@@ -188,47 +225,71 @@ param_list
   ;
 
 param_decl
-  : type_spec pointer_opt IDENT              { show_decl($1, $3, $2); free($3); }
+  : type_spec pointer_opt IDENT              
+    { show_decl(tipoParaString($1), $3, $2); free($3); }
   ;
-
-/* ---------- Blocos e statements (C com chaves) ---------- */
 
 compound_stmt
   : LBRACE stmt_list_opt RBRACE
+    { $$ = criarBloco($2, yylineno); }
   ;
 
 stmt_list_opt
   : /* vazio */
+    { $$ = criarVazio(); }
   | stmt_list_opt stmt
+    {
+        if ($1->tipo == AST_VAZIO) {
+            $$ = $2;
+        } else {
+            $$ = criarLista($1, $2);
+        }
+    }
   ;
 
 stmt
-  : declaration SEMI
-  | expr_stmt
-  | selection_stmt
-  | iteration_stmt
-  | jump_stmt
-  | SEMI
+  : declaration    
+      { $$ = $1; }
+  | expr_stmt     
+      { $$ = $1; }
+  | selection_stmt      
+      { $$ = $1; }
+  | iteration_stmt      
+      { $$ = $1; }
+  | jump_stmt           
+      { $$ = $1; }
+  | compound_stmt       
+      { $$ = $1; }
+  | SEMI                
+      { $$ = criarVazio(); }
   ;
 
+
 expr_stmt
-  : expression SEMI
+  : expr_ast SEMI
+    { $$ = criarExprStmt($1, yylineno); }
   ;
 
 selection_stmt
-  : IF LPAREN expression RPAREN stmt
-  | IF LPAREN expression RPAREN stmt ELSE stmt
+  : IF LPAREN expr_ast RPAREN stmt
+    { $$ = criarIf($3, $5, NULL, yylineno); }
+  | IF LPAREN expr_ast RPAREN stmt ELSE stmt
+    { $$ = criarIf($3, $5, $7, yylineno); }
   ;
 
 iteration_stmt
-  : WHILE LPAREN expression RPAREN stmt
+  : WHILE LPAREN expr_ast RPAREN stmt
+    { $$ = criarWhile($3, $5, yylineno); }
   | FOR LPAREN for_init_opt SEMI for_condition_opt SEMI for_increment_opt RPAREN stmt
+    {
+        $$ = criarFor(criarVazio(), criarVazio(), criarVazio(), $9, yylineno);
+    }
   ;
 
 for_init_opt
   : /* vazio */
   | expression
-  | declaration
+  | declaration_nosemi
   ;
 
 for_condition_opt
@@ -242,15 +303,18 @@ for_increment_opt
   ;
 
 jump_stmt
-  : RETURN expression SEMI
+  : RETURN expr_ast SEMI
+    { $$ = criarReturn($2, yylineno); }
   | RETURN SEMI
+    { $$ = criarReturn(NULL, yylineno); }
   ;
 
-/* ---------- Expressões ---------- */
-
+/* Análise semântica (tipos) */
 expression
-  : assignment_expression                              { $$ = $1; }
-  | expression COMMA assignment_expression             { $$ = $3; /* resultado da vírgula é o último */ }
+  : assignment_expression                              
+    { $$ = $1; }
+  | expression COMMA assignment_expression             
+    { $$ = $3; }
   ;
 
 assignment_expression
@@ -259,19 +323,16 @@ assignment_expression
   | unary_expression ASSIGN assignment_expression               
     { 
         printf("[ASSIGN] =\n");
-        // Verifica compatibilidade de tipos
         if (!tiposCompativeis($1, $3)) {
-            fprintf(stderr, "Erro semântico (linha %d): Atribuição incompatível entre tipos '%s' e '%s'.\n",
-                    yylineno, tipoParaString($1), tipoParaString($3));
+            fprintf(stderr, "Erro semântico (linha %d): Atribuição incompatível.\n", yylineno);
         }
-        $$ = $1;  // tipo resultante é o tipo da variável à esquerda
+        $$ = $1;
     }
   | unary_expression PLUSEQ assignment_expression               
     { 
         printf("[ASSIGN] +=\n");
         if (!tiposCompativeis($1, $3)) {
-            fprintf(stderr, "Erro semântico (linha %d): Operação += incompatível entre tipos '%s' e '%s'.\n",
-                    yylineno, tipoParaString($1), tipoParaString($3));
+            fprintf(stderr, "Erro semântico (linha %d): Operação += incompatível.\n", yylineno);
         }
         $$ = $1;
     }
@@ -279,8 +340,7 @@ assignment_expression
     { 
         printf("[ASSIGN] -=\n");
         if (!tiposCompativeis($1, $3)) {
-            fprintf(stderr, "Erro semântico (linha %d): Operação -= incompatível entre tipos '%s' e '%s'.\n",
-                    yylineno, tipoParaString($1), tipoParaString($3));
+            fprintf(stderr, "Erro semântico (linha %d): Operação -= incompatível.\n", yylineno);
         }
         $$ = $1;
     }
@@ -288,8 +348,7 @@ assignment_expression
     { 
         printf("[ASSIGN] *=\n");
         if (!tiposCompativeis($1, $3)) {
-            fprintf(stderr, "Erro semântico (linha %d): Operação *= incompatível entre tipos '%s' e '%s'.\n",
-                    yylineno, tipoParaString($1), tipoParaString($3));
+            fprintf(stderr, "Erro semântico (linha %d): Operação *= incompatível.\n", yylineno);
         }
         $$ = $1;
     }
@@ -297,162 +356,334 @@ assignment_expression
     { 
         printf("[ASSIGN] /=\n");
         if (!tiposCompativeis($1, $3)) {
-            fprintf(stderr, "Erro semântico (linha %d): Operação /= incompatível entre tipos '%s' e '%s'.\n",
-                    yylineno, tipoParaString($1), tipoParaString($3));
+            fprintf(stderr, "Erro semântico (linha %d): Operação /= incompatível.\n", yylineno);
         }
         $$ = $1;
     }
   | unary_expression PERCENTEQ assignment_expression            
     { 
         printf("[ASSIGN] %%=\n");
-        // Módulo só funciona com int
         if ($1 != TIPO_INT || $3 != TIPO_INT) {
-            fprintf(stderr, "Erro semântico (linha %d): Operação %%= requer operandos do tipo int.\n", yylineno);
+            fprintf(stderr, "Erro semântico (linha %d): Operação %%= requer int.\n", yylineno);
         }
         $$ = TIPO_INT;
     }
   ;
 
 conditional_expression
-  : logical_or_expression                              { $$ = $1; }
+  : logical_or_expression
+    { $$ = $1; }
   ;
 
 logical_or_expression
-  : logical_and_expression                             { $$ = $1; }
-  | logical_or_expression OROR logical_and_expression  { $$ = TIPO_INT; /* resultado booleano */ }
+  : logical_and_expression
+    { $$ = $1; }
+  | logical_or_expression OROR logical_and_expression
+    { $$ = TIPO_INT; }
   ;
 
 logical_and_expression
-  : equality_expression                                     { $$ = $1; }
-  | logical_and_expression ANDAND equality_expression       { $$ = TIPO_INT; /* resultado booleano */ }
+  : equality_expression
+    { $$ = $1; }
+  | logical_and_expression ANDAND equality_expression
+    { $$ = TIPO_INT; }
   ;
 
 equality_expression
-  : relational_expression                                   { $$ = $1; }
-  | equality_expression EQ relational_expression            { $$ = TIPO_INT; /* resultado booleano */ }
-  | equality_expression NE relational_expression            { $$ = TIPO_INT; /* resultado booleano */ }
+  : relational_expression
+    { $$ = $1; }
+  | equality_expression EQ relational_expression
+    { $$ = TIPO_INT; }
+  | equality_expression NE relational_expression
+    { $$ = TIPO_INT; }
   ;
 
 relational_expression
-  : additive_expression                                     { $$ = $1; }
-  | relational_expression LT additive_expression            { $$ = TIPO_INT; /* resultado booleano */ }
-  | relational_expression LE additive_expression            { $$ = TIPO_INT; /* resultado booleano */ }
-  | relational_expression GT additive_expression            { $$ = TIPO_INT; /* resultado booleano */ }
-  | relational_expression GE additive_expression            { $$ = TIPO_INT; /* resultado booleano */ }
+  : additive_expression
+    { $$ = $1; }
+  | relational_expression LT additive_expression
+    { $$ = TIPO_INT; }
+  | relational_expression LE additive_expression
+    { $$ = TIPO_INT; }
+  | relational_expression GT additive_expression
+    { $$ = TIPO_INT; }
+  | relational_expression GE additive_expression
+    { $$ = TIPO_INT; }
   ;
 
 additive_expression
-  : multiplicative_expression                               { $$ = $1; }
-  | additive_expression PLUS multiplicative_expression      
-    { 
-        // Promove para float se algum operando for float
-        $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1;
-    }
-  | additive_expression MINUS multiplicative_expression     
-    { 
-        $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1;
-    }
+  : multiplicative_expression
+    { $$ = $1; }
+  | additive_expression PLUS multiplicative_expression
+    { $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1; }
+  | additive_expression MINUS multiplicative_expression
+    { $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1; }
   ;
 
 multiplicative_expression
-  : unary_expression                                        { $$ = $1; }
-  | multiplicative_expression STAR unary_expression         
+  : unary_expression
+    { $$ = $1; }
+  | multiplicative_expression STAR unary_expression
+    { $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1; }
+  | multiplicative_expression SLASH unary_expression
+    { $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1; }
+  | multiplicative_expression PERCENT unary_expression
     { 
-        $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1;
-    }
-  | multiplicative_expression SLASH unary_expression        
-    { 
-        $$ = ($1 == TIPO_FLOAT || $3 == TIPO_FLOAT) ? TIPO_FLOAT : $1;
-    }
-  | multiplicative_expression PERCENT unary_expression      
-    { 
-        // Módulo só funciona com int
         if ($1 != TIPO_INT || $3 != TIPO_INT) {
-            fprintf(stderr, "Erro semântico (linha %d): Operador %% requer operandos do tipo int.\n", yylineno);
+            fprintf(stderr, "Erro semântico (linha %d): Operador %% requer int.\n", yylineno);
         }
         $$ = TIPO_INT;
     }
   ;
 
-/* --- PONTEIROS: & (address-of) e * (deref) no nível unário --- */
 unary_expression
-  : postfix_expression                                      { $$ = $1; }
-  | AMP unary_expression        %prec UAMP                  
-    { 
-        printf("[PTR] addr-of\n"); 
-        $$ = $2;  // tipo do ponteiro
-    }
-  | STAR unary_expression       %prec USTAR                 
-    { 
-        printf("[PTR] deref\n"); 
-        $$ = $2;  // tipo desreferenciado
-    }
-  | MINUS unary_expression      %prec UMINUS                { $$ = $2; }
-  | NOT unary_expression                                    { $$ = TIPO_INT; /* resultado booleano */ }
+  : postfix_expression
+    { $$ = $1; }
+  | AMP unary_expression %prec UAMP
+    { printf("[PTR] addr-of\n"); $$ = $2; }
+  | STAR unary_expression %prec USTAR
+    { printf("[PTR] deref\n"); $$ = $2; }
+  | MINUS unary_expression %prec UMINUS
+    { $$ = $2; }
+  | NOT unary_expression
+    { $$ = TIPO_INT; }
   ;
 
 postfix_expression
-  : primary_expression                                      { $$ = $1; }
-  | postfix_expression LBRACK expression RBRACK             { $$ = $1; /* tipo do elemento do array */ }
-  | postfix_expression LPAREN argument_expr_list_opt RPAREN { $$ = TIPO_DESCONHECIDO; /* depende da função */ }
-  | postfix_expression DOT IDENT                            { $$ = TIPO_DESCONHECIDO; /* depende do campo */ }
-  | postfix_expression ARROW IDENT                          { $$ = TIPO_DESCONHECIDO; /* depende do campo */ }
+  : primary_expression
+    { $$ = $1; }
+  | postfix_expression LBRACK expression RBRACK
+    { $$ = $1; }
+  | postfix_expression LPAREN argument_expr_list_opt RPAREN
+    { $$ = TIPO_DESCONHECIDO; }
+  | postfix_expression DOT IDENT
+    { $$ = TIPO_DESCONHECIDO; }
+  | postfix_expression ARROW IDENT
+    { $$ = TIPO_DESCONHECIDO; }
   ;
 
 argument_expr_list_opt
-  : /* vazio */
-  | argument_expr_list
+  : /* vazio */             
+      { $$ = NULL; }
+  | argument_expr_list       
+      { $$ = $1; }
   ;
 
 argument_expr_list
-  : assignment_expression
-  | argument_expr_list COMMA assignment_expression
+  : assignment_expr_ast
+      { 
+          $$ = criarLista($1, NULL);
+          fprintf(stderr, "✅ [YACC] argumento único criado\n");
+      }
+  | argument_expr_list COMMA assignment_expr_ast
+      { 
+          // Encontrar o último nó da lista
+          Ast *ultimo = $1;
+          while (ultimo->tipo == AST_LISTA && ultimo->dados.lista.proximo != NULL) {
+              ultimo = ultimo->dados.lista.proximo;
+          }
+          
+          // Adicionar novo argumento no final
+          if (ultimo->tipo == AST_LISTA) {
+              ultimo->dados.lista.proximo = criarLista($3, NULL);
+          } else {
+              // Primeiro elemento não era lista, criar lista
+              $$ = criarLista($1, criarLista($3, NULL));
+          }
+          
+          $$ = $1;  // Retornar a lista completa
+          fprintf(stderr, "✅ [YACC] argumento adicionado à lista\n");
+      }
   ;
 
 primary_expression
   : IDENT
     {
-        // Verifica se a variável foi declarada
+        /* Checagem semântica movida para fase posterior
         Simbolo *s = buscarSimbolo($1);
         if (s == NULL) {
             fprintf(stderr, "Erro semântico (linha %d): Variável '%s' não declarada.\n", yylineno, $1);
             $$ = TIPO_DESCONHECIDO;
         } else {
-            // Verifica se foi inicializada (apenas warning)
             if (!s->inicializada) {
                 fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
             }
             $$ = s->tipo;
         }
+        */
+        $$ = TIPO_INT; /* Tipo padrão por enquanto */
         free($1);
     }
   | ICONST
-    {
-        $$ = TIPO_INT;
-    }
+    { $$ = TIPO_INT; }
   | FCONST
-    {
-        $$ = TIPO_FLOAT;
-        free($1);
-    }
+    { $$ = TIPO_FLOAT; free($1); }
   | SCONST
-    {
-        $$ = TIPO_CHAR;  // strings e chars são tratados como char
-        free($1);
-    }
+    { $$ = TIPO_CHAR; free($1); }
   | T_NULL
-    {
-        $$ = TIPO_VOID;  // NULL tem tipo void*
-    }
+    { $$ = TIPO_VOID; }
   | LPAREN expression RPAREN
-    {
-        $$ = $2;
+    { $$ = $2; }
+  ;
+
+/* Construção da AST */
+expr_ast
+  : assignment_expr_ast
+      { $$ = $1; }
+  ;
+
+assignment_expr_ast
+  : unary_expr_ast ASSIGN expr_ast
+      { 
+          printf("[AST] Atribuição detectada: linha %d\n", yylineno);
+          $$ = criarAtribuicao($1, $3, yylineno); 
+      }
+  | logical_or_expr_ast
+      { $$ = $1; }
+  ;
+
+
+logical_or_expr_ast
+  : logical_and_expr_ast
+    { $$ = $1; }
+  | logical_or_expr_ast OROR logical_and_expr_ast
+    { $$ = criarOpBinario(OP_OR, $1, $3, yylineno); }
+  ;
+
+logical_and_expr_ast
+  : equality_expr_ast
+    { $$ = $1; }
+  | logical_and_expr_ast ANDAND equality_expr_ast
+    { $$ = criarOpBinario(OP_AND, $1, $3, yylineno); }
+  ;
+
+equality_expr_ast
+  : relational_expr_ast
+    { $$ = $1; }
+  | equality_expr_ast EQ relational_expr_ast
+    { $$ = criarOpBinario(OP_EQ, $1, $3, yylineno); }
+  | equality_expr_ast NE relational_expr_ast
+    { $$ = criarOpBinario(OP_NE, $1, $3, yylineno); }
+  ;
+
+relational_expr_ast
+  : additive_expr_ast
+    { $$ = $1; }
+  | relational_expr_ast LT additive_expr_ast
+    { $$ = criarOpBinario(OP_LT, $1, $3, yylineno); }
+  | relational_expr_ast LE additive_expr_ast
+    { $$ = criarOpBinario(OP_LE, $1, $3, yylineno); }
+  | relational_expr_ast GT additive_expr_ast
+    { $$ = criarOpBinario(OP_GT, $1, $3, yylineno); }
+  | relational_expr_ast GE additive_expr_ast
+    { $$ = criarOpBinario(OP_GE, $1, $3, yylineno); }
+  ;
+
+additive_expr_ast
+  : multiplicative_expr_ast
+    { $$ = $1; }
+  | additive_expr_ast PLUS multiplicative_expr_ast
+    { $$ = criarOpBinario(OP_MAIS, $1, $3, yylineno); }
+  | additive_expr_ast MINUS multiplicative_expr_ast
+    { $$ = criarOpBinario(OP_MENOS, $1, $3, yylineno); }
+  ;
+
+multiplicative_expr_ast
+  : unary_expr_ast
+    { $$ = $1; }
+  | multiplicative_expr_ast STAR unary_expr_ast
+    { $$ = criarOpBinario(OP_MULT, $1, $3, yylineno); }
+  | multiplicative_expr_ast SLASH unary_expr_ast
+    { $$ = criarOpBinario(OP_DIV, $1, $3, yylineno); }
+  | multiplicative_expr_ast PERCENT unary_expr_ast
+    { $$ = criarOpBinario(OP_MOD, $1, $3, yylineno); }
+  ;
+
+unary_expr_ast
+  : postfix_expr_ast
+    { 
+        $$ = $1;
+    }
+  | LPAREN type_spec pointer_opt RPAREN unary_expr_ast
+    { 
+        printf("[AST] (CAST) (%s", tipoParaString($2));
+        if ($3 > 0) printf(" %*s", $3, "*");
+        printf(") ignorado por enquanto\n");
+        $$ = $5;  /* apenas propaga a expressão */
+    }
+  | AMP unary_expr_ast %prec UAMP
+    { 
+        printf("[AST] Operador & sobre expr tipo %d\n", $2 ? $2->tipo : (TipoNoAST)-1);
+        $$ = criarOpUnario(OP_UN_ADDR, $2, yylineno); 
+    }
+  | STAR unary_expr_ast %prec USTAR
+    { 
+        printf("[AST] Operador * sobre expr tipo %d\n", $2 ? $2->tipo : (TipoNoAST)-1);
+        $$ = criarOpUnario(OP_UN_DEREF, $2, yylineno); 
+    }
+  | MINUS unary_expr_ast %prec UMINUS
+    { 
+        printf("[AST] Operador unário - sobre expr tipo %d\n", $2 ? $2->tipo : (TipoNoAST)-1);
+        $$ = criarOpUnario(OP_UN_MENOS, $2, yylineno); 
+    }
+  | NOT unary_expr_ast
+    { 
+        printf("[AST] Operador ! sobre expr tipo %d\n", $2 ? $2->tipo : (TipoNoAST)-1);
+        $$ = criarOpUnario(OP_UN_NOT, $2, yylineno); 
     }
   ;
 
+postfix_expr_ast
+  : primary_expr_ast
+    { $$ = $1; }
+  | postfix_expr_ast LPAREN argument_expr_list_opt RPAREN
+    { 
+        // Extrair nome se for um identificador
+        const char *nome = NULL;
+        if ($1->tipo == AST_IDENTIFICADOR && $1->dados.identificador.nome) {
+            nome = $1->dados.identificador.nome;
+        }
+        $$ = criarChamadaFuncao(nome, $3, yylineno); 
+    }
+  | postfix_expr_ast LBRACK expr_ast RBRACK
+    { $$ = criarIndexacao($1, $3, yylineno); }
+  ;
+
+primary_expr_ast
+  : IDENT
+    {
+        /* Checagem semântica movida para fase posterior
+        Simbolo *s = buscarSimbolo($1);
+        if (s == NULL) {
+            fprintf(stderr, "Erro semântico (linha %d): Variável '%s' não declarada.\n", yylineno, $1);
+        } else if (!s->inicializada) {
+            fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
+        }
+        */
+        $$ = criarIdentificador($1, yylineno);
+        free($1);
+    }
+  | ICONST
+    { $$ = criarLiteralInt($1, yylineno); }
+  | FCONST
+    { 
+        float val = atof($1);
+        $$ = criarLiteralFloat(val, yylineno);
+        free($1);
+    }
+  | SCONST
+    { 
+        $$ = criarLiteralString($1, yylineno);
+        free($1);
+    }
+  | T_NULL
+    { $$ = criarLiteralInt(0, yylineno); }
+  | LPAREN expr_ast RPAREN
+    { $$ = $2; }
+  ;
+  
 %%
 
-/* yyerror detalhado (trazido e adaptado da main) */
 void yyerror(const char* s) {
     fprintf(stderr, "\n=== ERRO SINTÁTICO ===\n");
     fprintf(stderr, "Linha %d: %s\n", yylineno, s);

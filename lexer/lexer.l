@@ -1,28 +1,37 @@
 %{
-/* lexer_c.l — Flex lexer para um subconjunto de C com ponteiros.
- * Produz os tokens esperados por parser/parser.y
- */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "parser/parser.tab.h"
+#include "../parser/parser.tab.h"
 
-/* yylval é char* (vide parser.y). */
+#define RET(tok) do { atualizar_token(#tok, yytext); \
+fprintf(stderr, "[LEX] %s '%s'\n", #tok, yytext); \
+return tok; } while (0)
+
 static char* mydup(const char* s){
-    size_t n = strlen(s);
-    char* p = (char*)malloc(n+1);
-    if(!p){ perror("malloc"); exit(1); }
-    memcpy(p, s, n+1);
-    return p;
+size_t n = strlen(s);
+char* p = (char*)malloc(n+1);
+if(!p){ perror("malloc"); exit(1); }
+memcpy(p, s, n+1);
+return p;
 }
 
-int yylineno = 1;
+char *ultimo_token = NULL;
+char *ultimo_lexema = NULL;
+
+void atualizar_token(const char *token, const char *lexema) {
+if (ultimo_token) free(ultimo_token);
+if (ultimo_lexema) free(ultimo_lexema);
+ultimo_token = mydup(token);
+ultimo_lexema = mydup(lexema);
+}
 %}
 
 %option noyywrap nodefault yylineno
+%option noinput nounput
+
 %x COMMENT
 
-/* ----------- Padrões ----------- */
 WS       [ \t\r]+
 NEWL     \n
 DIG      [0-9]
@@ -30,85 +39,76 @@ IDSTART  [A-Za-z_]
 IDCONT   [A-Za-z0-9_]
 ESC      \\([\\'"nrt0]|x[0-9A-Fa-f]{2}|[0-7]{1,3})
 CHAR     '([^\\'\n]|{ESC})'
-STRING   "([^\\\"\n]|{ESC})*"
+
 
 %%
-/* ----------- Espaços/linhas ----------- */
-{WS}                ;           /* ignora espaços/tabs */
-{NEWL}+             { yylineno += yyleng; return NEWLINE; }
+{WS} ;
+{NEWL}+ ;
 
-/* ----------- Comentários ----------- */
-"//".*              ;           /* até o fim da linha */
-"/*"                { BEGIN(COMMENT); }
-<COMMENT>[^*\n]*    ;
-<COMMENT>"*"+[^*/]  ;
-<COMMENT>\n         { yylineno++; }
-<COMMENT>"*"+"/"    { BEGIN(INITIAL); }
+"//".* ;
+"/*" { BEGIN(COMMENT); }
+<COMMENT>[^*\n]* ;
+<COMMENT>"*"+[^*/] ;
+<COMMENT>\n { yylineno++; }
+<COMMENT>"*"+"/" { BEGIN(INITIAL); }
 
-/* ----------- Pré-processador (ignora linha inteira) ----------- */
-"#".*               { /* ignora diretivas por enquanto */ }
+"#".* { }
 
-/* ----------- Palavras-chave e tipos ----------- */
-"int"               { return T_INT; }
-"float"             { return T_FLOAT; }
-"char"              { return T_CHAR; }
-"void"              { return T_VOID; }
-"if"                { return IF; }
-"else"              { return ELSE; }
-"while"             { return WHILE; }
-"for"               { return FOR; }
-"return"            { return RETURN; }
-"NULL"              { return T_NULL; }
+"int" { RET(T_INT); }
+"float" { RET(T_FLOAT); }
+"char" { RET(T_CHAR); }
+"void" { RET(T_VOID); }
+"if" { RET(IF); }
+"else" { RET(ELSE); }
+"while" { RET(WHILE); }
+"for" { RET(FOR); }
+"return" { RET(RETURN); }
+"NULL" { RET(T_NULL); }
+"static"     { RET(T_STATIC); }
 
-/* ----------- Operadores/Delimitadores ----------- */
-/* Atribuições compostas */
-"+="                { return PLUSEQ; }
-"-="                { return MINUSEQ; }
-"*="                { return STAREQ; }
-"/="                { return SLASHEQ; }
-"%="                { return PERCENTEQ; }
+"+=" { RET(PLUSEQ); }
+"-=" { RET(MINUSEQ); }
+"*=" { RET(STAREQ); }
+"/=" { RET(SLASHEQ); }
+"%=" { RET(PERCENTEQ); }
 
-"&&"                { return ANDAND; }
-"||"                { return OROR; }
-"=="                { return EQ; }
-"!="                { return NE; }
-"<="                { return LE; }
-">="                { return GE; }
-"->"                { return ARROW; }
+"&&" { RET(ANDAND); }
+"||" { RET(OROR); }
+"==" { RET(EQ); }
+"!=" { RET(NE); }
+"<=" { RET(LE); }
+">=" { RET(GE); }
+"->" { RET(ARROW); }
 
-"<"                 { return LT; }
-">"                 { return GT; }
-"!"                 { return NOT; }
+"<" { RET(LT); }
+">" { RET(GT); }
+"!" { RET(NOT); }
+"&" { RET(AMP); }
+"*" { RET(STAR); }
+"+" { RET(PLUS); }
+"-" { RET(MINUS); }
+"/" { RET(SLASH); }
+"%" { RET(PERCENT); }
+"=" { RET(ASSIGN); }
+"." { RET(DOT); }
+"," { RET(COMMA); }
+";" { RET(SEMI); }
+":" { RET(COLON); }
 
-"&"                 { return AMP; }
-"*"                 { return STAR; }
-"+"                 { return PLUS; }
-"-"                 { return MINUS; }
-"/"                 { return SLASH; }
-"%"                 { return PERCENT; }
-"="                 { return ASSIGN; }
-"."                 { return DOT; }
-","                 { return COMMA; }
-";"                 { return SEMI; }
-":"                 { return COLON; }
+"(" { RET(LPAREN); }
+")" { RET(RPAREN); }
+"{" { RET(LBRACE); }
+"}" { RET(RBRACE); }
+"[" { RET(LBRACK); }
+"]" { RET(RBRACK); }
 
-"("                 { return LPAREN; }
-")"                 { return RPAREN; }
-"{"                 { return LBRACE; }
-"}"                 { return RBRACE; }
-"["                 { return LBRACK; }
-"]"                 { return RBRACK; }
+{DIG}+"."{DIG}+ { yylval.sval = mydup(yytext); RET(FCONST); }
+{DIG}+ { yylval.ival = atoi(yytext); RET(ICONST); }
+\"[^\"]*\"  { yylval.sval = mydup(yytext); RET(SCONST); }
+{CHAR} { yylval.sval = mydup(yytext); RET(SCONST); }
 
-/* ----------- Literais ----------- */
-{DIG}+"."{DIG}+     { yylval.s = mydup(yytext); return FCONST; }  /* float literal */
-{DIG}+              { yylval.s = mydup(yytext); return ICONST; }
-{STRING}            { yylval.s = mydup(yytext); return SCONST; }
-{CHAR}              { yylval.s = mydup(yytext); return SCONST; }  /* trata char como string simples */
+{IDSTART}{IDCONT}* { yylval.sval = mydup(yytext); RET(IDENT); }
 
-/* ----------- Identificadores ----------- */
-{IDSTART}{IDCONT}*  { yylval.s = mydup(yytext); return IDENT; }
-
-/* ----------- Qualquer outra coisa ----------- */
-.                   { yylval.s = mydup(yytext); return BADCHAR; }
+. { yylval.sval = mydup(yytext); RET(BADCHAR); }  
 
 %%

@@ -1,6 +1,7 @@
 #ifndef TABELA_H
 #define TABELA_H
 
+#include "tipos.h"
 #include "ast.h"
 
 // Definição da categoria do símbolo (variável, array ou função)
@@ -9,15 +10,6 @@ typedef enum {
     CATEGORIA_ARRAY,
     CATEGORIA_FUNCAO
 } Categoria;
-
-// Definição dos tipos de dados suportados
-typedef enum {
-    TIPO_INT,
-    TIPO_FLOAT,
-    TIPO_CHAR,
-    TIPO_VOID,
-    TIPO_DESCONHECIDO
-} Tipo;
 
 // Definição da estrutura Simbolo
 typedef struct simbolo {
@@ -30,6 +22,7 @@ typedef struct simbolo {
 } Simbolo;
 
 // Funções que manipulam a tabela de símbolos
+void inicializarBuiltins();  // ⭐ NOVA: Inicializa funções built-in da biblioteca padrão C
 void inserirSimbolo(char *nome, Categoria categoria);
 void inserirSimboloTipado(char *nome, Categoria categoria, Tipo tipo, int nivel_ponteiro);
 Simbolo *buscarSimbolo(char *nome);

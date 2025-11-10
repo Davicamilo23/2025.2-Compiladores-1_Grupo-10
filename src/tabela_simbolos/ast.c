@@ -2,11 +2,17 @@
 #include "tabela.h"
 #include <string.h>
 
-static char* duplicarString(const char *str) {
+char* duplicarString(const char *str) {
     if (!str) return NULL;
+
     size_t len = strlen(str);
     char *nova = (char*)malloc(len + 1);
-    if (nova) strcpy(nova, str);
+    if (!nova) {
+        fprintf(stderr, "[ERRO] Falha ao alocar memória em duplicarString()\n");
+        exit(1); 
+    }
+
+    memcpy(nova, str, len + 1); 
     return nova;
 }
 
@@ -168,11 +174,18 @@ Ast* criarIndexacao(Ast *array, Ast *indice, int linha) {
 
 // Criar nó de chamada de função
 Ast* criarChamadaFuncao(const char *nome, Ast *argumentos, int linha) {
+    // ADICIONAR ESTAS LINHAS:
+    if (nome == NULL) {
+        fprintf(stderr, "ERRO: criarChamadaFuncao recebeu nome NULL (linha %d)\n", linha);
+        nome = "unknown_function";
+    }
+    // FIM DA ADIÇÃO
+    
     Ast *no = (Ast*)calloc(1, sizeof(Ast));
     if (!no) return NULL;
     
     no->tipo = AST_CHAMADA_FUNCAO;
-    no->tipo_dado = TIPO_DESCONHECIDO;  // será resolvido no passo C
+    no->tipo_dado = TIPO_DESCONHECIDO;
     no->linha = linha;
     no->dados.chamada.nome_funcao = duplicarString(nome);
     no->dados.chamada.argumentos = argumentos;
@@ -267,14 +280,27 @@ Ast* criarBloco(Ast *statements, int linha) {
 
 // Criar nó de expressão como statement
 Ast* criarExprStmt(Ast *expr, int linha) {
+    fprintf(stderr, "\n[AST] 🧩 criarExprStmt chamado (linha %d)\n", linha);
+
+    if (!expr) {
+        fprintf(stderr, "⚠️ [AST] criarExprStmt recebeu expr = NULL (linha %d)\n", linha);
+    } else {
+        fprintf(stderr, "✅ [AST] criarExprStmt recebeu expr tipo = %d\n", expr->tipo);
+    }
+
     Ast *no = (Ast*)calloc(1, sizeof(Ast));
-    if (!no) return NULL;
-    
+    if (!no) {
+        fprintf(stderr, "❌ [AST] Falha em calloc em criarExprStmt (linha %d)\n", linha);
+        return NULL;
+    }
+
     no->tipo = AST_EXPR_STMT;
     no->tipo_dado = TIPO_VOID;
     no->linha = linha;
-    no->dados.bloco.statements = expr;
-    
+    no->dados.expr_stmt.expressao = expr;
+
+    fprintf(stderr, "✨ [AST] AST_EXPR_STMT criado com expr @%p (linha %d)\n", (void*)expr, linha);
+
     return no;
 }
 
@@ -390,13 +416,12 @@ void liberarAst(Ast *ast) {
         case AST_RETURN:
             liberarAst(ast->dados.return_stmt.expressao);
             break;
-            
+
         case AST_BLOCO:
-        case AST_EXPR_STMT:
         case AST_PROGRAMA:
-            liberarAst(ast->dados.bloco.statements);
+            liberarAst(ast->dados.bloco.statements);            
             break;
-            
+
         case AST_CHAMADA_FUNCAO:
             free(ast->dados.chamada.nome_funcao);
             liberarAst(ast->dados.chamada.argumentos);
@@ -415,7 +440,11 @@ void liberarAst(Ast *ast) {
         case AST_PARAM:
             free(ast->dados.parametro.nome);
             break;
-            
+
+        case AST_EXPR_STMT:
+            liberarAst(ast->dados.expr_stmt.expressao);
+            break;
+
         default:
             break;
     }
@@ -537,9 +566,8 @@ void imprimirAst(Ast *ast, int prof) {
             imprimirAst(ast->dados.return_stmt.expressao, prof + 1);
             break;
         case AST_BLOCO:
-        case AST_EXPR_STMT:
         case AST_PROGRAMA:
-            imprimirAst(ast->dados.bloco.statements, prof + 1);
+            imprimirAst(ast->dados.bloco.statements, prof + 1); 
             break;
         case AST_CHAMADA_FUNCAO:
             imprimirAst(ast->dados.chamada.argumentos, prof + 1);
@@ -671,10 +699,14 @@ void passoDeclararSimbolos(Ast *ast) {
             passoDeclararSimbolos(ast->dados.indexacao.indice);
             break;
             
-        case AST_PROGRAMA:
         case AST_EXPR_STMT:
+            passoDeclararSimbolos(ast->dados.expr_stmt.expressao);
+            break;
+
+        case AST_PROGRAMA:
             passoDeclararSimbolos(ast->dados.bloco.statements);
             break;
+
             
         default:
             // Literais, identificadores, etc. não fazem nada aqui
@@ -866,11 +898,14 @@ void passoChecagemSemantica(Ast *ast) {
             break;
             
         case AST_BLOCO:
-        case AST_PROGRAMA:
         case AST_EXPR_STMT:
+            passoChecagemSemantica(ast->dados.expr_stmt.expressao);
+            break;
+
+        case AST_PROGRAMA:
             passoChecagemSemantica(ast->dados.bloco.statements);
             break;
-            
+
         case AST_LISTA:
             passoChecagemSemantica(ast->dados.lista.item);
             passoChecagemSemantica(ast->dados.lista.proximo);
@@ -879,4 +914,20 @@ void passoChecagemSemantica(Ast *ast) {
         default:
             break;
     }
+}
+
+Ast* adicionarDeclaracao(Ast* programa, Ast* nova_decl) {
+    if (!programa)
+        return criarPrograma(nova_decl, 0);
+
+    // Se o programa é uma lista de declarações, só encadeia
+    if (programa->tipo == AST_LISTA)
+        return criarLista(programa, nova_decl);
+
+    // Se é um programa raiz, encadeia o novo nó após o existente
+    if (programa->tipo == AST_PROGRAMA)
+        return criarLista(programa, nova_decl);
+
+    // Caso contrário, cria uma lista nova
+    return criarLista(programa, nova_decl);
 }

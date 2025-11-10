@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "tipos.h"
 
 // Tipos de nós da AST
 typedef enum {
@@ -63,15 +64,6 @@ typedef enum {
     OP_UN_ADDR,      // &expr (endereço)
     OP_UN_DEREF      // *expr (desreferência)
 } TipoOpUnario;
-
-// Tipos de dados (forward declaration - já definido em tabela.h)
-typedef enum {
-    TIPO_INT,
-    TIPO_FLOAT,
-    TIPO_CHAR,
-    TIPO_VOID,
-    TIPO_DESCONHECIDO
-} Tipo;
 
 // Estrutura do nó da AST
 typedef struct Ast {
@@ -176,6 +168,10 @@ typedef struct Ast {
             struct Ast *parametros;  // Lista de parâmetros
             struct Ast *corpo;
         } funcao;
+
+        struct {
+            struct Ast *expressao;
+        } expr_stmt;
         
         // Para listas
         struct {

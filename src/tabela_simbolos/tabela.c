@@ -13,9 +13,67 @@ Simbolo *tabela[TAM];
 unsigned hash(char *s) {
     unsigned h = 0;
     while (*s) {
-        h = (h << 4) + *s++;  // Aplica uma transformação simples de hash
+        h = (h << 4) + *s++;
     }
-    return h % TAM;  // Garante que o valor do hash fique dentro do tamanho da tabela
+    return h % TAM;
+}
+
+// ===== NOVA FUNÇÃO: Inicializar funções built-in =====
+void inicializarBuiltins() {
+    // printf - função variádica que retorna int
+    Simbolo *printf_sym = malloc(sizeof(Simbolo));
+    strcpy(printf_sym->nome, "printf");
+    printf_sym->categoria = CATEGORIA_FUNCAO;
+    printf_sym->tipo = TIPO_INT;
+    printf_sym->inicializada = 1;  // Built-ins são "pré-inicializadas"
+    printf_sym->nivel_ponteiro = 0;
+    unsigned i = hash("printf");
+    printf_sym->proximo = tabela[i];
+    tabela[i] = printf_sym;
+
+    // scanf - função variádica que retorna int
+    Simbolo *scanf_sym = malloc(sizeof(Simbolo));
+    strcpy(scanf_sym->nome, "scanf");
+    scanf_sym->categoria = CATEGORIA_FUNCAO;
+    scanf_sym->tipo = TIPO_INT;
+    scanf_sym->inicializada = 1;
+    scanf_sym->nivel_ponteiro = 0;
+    i = hash("scanf");
+    scanf_sym->proximo = tabela[i];
+    tabela[i] = scanf_sym;
+
+    // puts - retorna int
+    Simbolo *puts_sym = malloc(sizeof(Simbolo));
+    strcpy(puts_sym->nome, "puts");
+    puts_sym->categoria = CATEGORIA_FUNCAO;
+    puts_sym->tipo = TIPO_INT;
+    puts_sym->inicializada = 1;
+    puts_sym->nivel_ponteiro = 0;
+    i = hash("puts");
+    puts_sym->proximo = tabela[i];
+    tabela[i] = puts_sym;
+
+    // malloc - retorna void*
+    Simbolo *malloc_sym = malloc(sizeof(Simbolo));
+    strcpy(malloc_sym->nome, "malloc");
+    malloc_sym->categoria = CATEGORIA_FUNCAO;
+    malloc_sym->tipo = TIPO_VOID;
+    malloc_sym->inicializada = 1;
+    malloc_sym->nivel_ponteiro = 1;  // Retorna ponteiro
+    i = hash("malloc");
+    malloc_sym->proximo = tabela[i];
+    tabela[i] = malloc_sym;
+
+    // free - retorna void
+    Simbolo *free_sym = malloc(sizeof(Simbolo));
+    strcpy(free_sym->nome, "free");
+    free_sym->categoria = CATEGORIA_FUNCAO;
+    free_sym->tipo = TIPO_VOID;
+    free_sym->inicializada = 1;
+    free_sym->nivel_ponteiro = 0;
+    i = hash("free");
+    free_sym->proximo = tabela[i];
+    tabela[i] = free_sym;
 }
 
 // Função para inserir um símbolo na tabela
@@ -26,37 +84,41 @@ void inserirSimbolo(char *nome, Categoria categoria) {
 // Função para inserir um símbolo com informações de tipo
 void inserirSimboloTipado(char *nome, Categoria categoria, Tipo tipo, int nivel_ponteiro) {
     // Verifica se o símbolo já está na tabela
-    if (buscarSimbolo(nome) != NULL) {
+    Simbolo *existente = buscarSimbolo(nome);
+    if (existente != NULL) {
+        // Permite redeclaração se for uma built-in (não mostra erro)
+        if (existente->inicializada == 1 && existente->categoria == CATEGORIA_FUNCAO) {
+            return;  // Ignora silenciosamente
+        }
         printf("Erro semântico: Redeclaração da variável '%s'.\n", nome);
         return;
     }
 
-    unsigned i = hash(nome);  // Obtém o índice para a tabela de hash
-    Simbolo *s = malloc(sizeof(Simbolo));  // Aloca memória para o novo símbolo
+    unsigned i = hash(nome);
+    Simbolo *s = malloc(sizeof(Simbolo));
 
-    if (!s) {  // Verifica se a alocação foi bem-sucedida
+    if (!s) {
         printf("Erro ao alocar memória para o símbolo.\n");
         return;
     }
 
-    // Preenche os dados do símbolo
     strcpy(s->nome, nome);
     s->categoria = categoria;
     s->tipo = tipo;
-    s->inicializada = 0;  // Por padrão, não inicializada
+    s->inicializada = 0;
     s->nivel_ponteiro = nivel_ponteiro;
-    s->proximo = tabela[i];  // Insere o símbolo no início da lista encadeada
-    tabela[i] = s;  // Atualiza o índice na tabela
+    s->proximo = tabela[i];
+    tabela[i] = s;
 }
 
 // Função para buscar um símbolo na tabela
 Simbolo *buscarSimbolo(char *nome) {
-    unsigned i = hash(nome);  // Obtém o índice para a tabela de hash
-    for (Simbolo *s = tabela[i]; s; s = s->proximo) {  // Percorre a lista encadeada
-        if (strcmp(s->nome, nome) == 0)  // Verifica se o nome do símbolo coincide
-            return s;  // Retorna o símbolo encontrado
+    unsigned i = hash(nome);
+    for (Simbolo *s = tabela[i]; s; s = s->proximo) {
+        if (strcmp(s->nome, nome) == 0)
+            return s;
     }
-    return NULL;  // Retorna NULL caso o símbolo não seja encontrado
+    return NULL;
 }
 
 // Função para marcar um símbolo como inicializado
