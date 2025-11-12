@@ -504,11 +504,15 @@ primary_expression
         if (s == NULL) {
             fprintf(stderr, "Erro semântico (linha %d): Variável '%s' não declarada.\n", yylineno, $1);
             $$ = TIPO_DESCONHECIDO;
+            limpar_ident();
         } else {
             if (!s->inicializada) {
                 fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
             }
             $$ = s->tipo;
+            /* [SEM] marca IDENT p/ validação de indexação */
+            int is_array = (s->categoria == CATEGORIA_ARRAY);
+            marcar_ident($1, is_array);
         }
         */
         $$ = TIPO_INT; /* Tipo padrão por enquanto */
