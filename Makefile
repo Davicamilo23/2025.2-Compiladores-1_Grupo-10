@@ -14,13 +14,13 @@
 
 # Compilador e flags
 CC = gcc
-CFLAGS = -Wall -Wextra -g -I. -Iparser -Itabela_simbolos
+CFLAGS = -Wall -Wextra -g -I. -Iparser -Itabela_simbolos -Isrc/otimizador
 LDFLAGS = -lfl
 
 # Arquivos fonte
 LEX_SRC = lexer/lexer.l
 YACC_SRC = parser/parser.y
-C_SOURCES = src/main.c src/gerador_python.c src/tabela_simbolos/tabela.c src/tabela_simbolos/ast.c
+C_SOURCES = src/main.c src/gerador_python.c src/tabela_simbolos/tabela.c src/tabela_simbolos/ast.c src/otimizador/otimizador.c
 
 # Arquivos gerados pelo flex/bison
 LEX_C = lexer/lex.yy.c
@@ -115,6 +115,16 @@ tests-errors: $(TARGET)
 		echo "⚠️  Script 'run_tests.sh' não encontrado."; \
 	fi
 
+# Rodar testes de otimização
+tests-otimizacao: $(TARGET)
+	@echo "🧪 Rodando testes de otimização..."
+	@if [ -f tests/otimizacao/run_otimizacao_tests.sh ]; then \
+		chmod +x tests/otimizacao/run_otimizacao_tests.sh; \
+		./tests/otimizacao/run_otimizacao_tests.sh; \
+	else \
+		echo "⚠️  Script de testes de otimização não encontrado."; \
+	fi
+
 # ============================================================
 # ▶️ Execução manual
 # ============================================================
@@ -137,14 +147,15 @@ help:
 	@echo "  make clean       - Remove arquivos gerados"
 	@echo "  make cleanall    - Remove tudo (incluindo backups)"
 	@echo "  make test        - Executa um teste simples (exemplo.c)"
-	@echo "  make tests       - Executa toda a suíte automática (run_tests.sh)"
-	@echo "  make tests-tipos - Executa apenas os testes de tipos"
-	@echo "  make tests-errors- Executa apenas os testes de erro"
-	@echo "  make run         - Executa o compilador manualmente"
+	@echo "  make tests          - Executa toda a suíte automática (run_tests.sh)"
+	@echo "  make tests-tipos    - Executa apenas os testes de tipos"
+	@echo "  make tests-errors   - Executa apenas os testes de erro"
+	@echo "  make tests-otimizacao - Executa apenas os testes de otimização"
+	@echo "  make run            - Executa o compilador manualmente"
 	@echo "  make help        - Mostra esta ajuda"
 	@echo ""
 
 # ============================================================
 # Alvos não vinculados a arquivos
 # ============================================================
-.PHONY: all clean cleanall test tests tests-tipos tests-errors run help
+.PHONY: all clean cleanall test tests tests-tipos tests-errors tests-otimizacao run help
