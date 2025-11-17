@@ -561,12 +561,12 @@ static const yytype_int16 yyrline[] =
      339,   347,   355,   363,   374,   379,   381,   386,   388,   393,
      395,   397,   402,   404,   406,   408,   410,   415,   417,   419,
      424,   426,   428,   430,   440,   442,   444,   446,   448,   453,
-     455,   457,   459,   461,   467,   468,   473,   478,   500,   517,
-     519,   521,   523,   525,   531,   536,   541,   547,   549,   554,
-     556,   561,   563,   565,   570,   572,   574,   576,   578,   583,
-     585,   587,   592,   594,   596,   598,   603,   607,   614,   619,
-     624,   629,   637,   639,   648,   653,   666,   668,   674,   679,
-     681
+     455,   457,   459,   461,   467,   468,   473,   478,   500,   521,
+     523,   525,   527,   529,   535,   540,   545,   551,   553,   558,
+     560,   565,   567,   569,   574,   576,   578,   580,   582,   587,
+     589,   591,   596,   598,   600,   602,   607,   611,   618,   623,
+     628,   633,   641,   643,   652,   657,   670,   672,   678,   683,
+     685
 };
 #endif
 
@@ -1977,247 +1977,251 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
         if (s == NULL) {
             fprintf(stderr, "Erro semântico (linha %d): Variável '%s' não declarada.\n", yylineno, $1);
             $$ = TIPO_DESCONHECIDO;
+            limpar_ident();
         } else {
             if (!s->inicializada) {
                 fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
             }
             $$ = s->tipo;
+            // [SEM] marca IDENT p/ validação de indexação
+            int is_array = (s->categoria == CATEGORIA_ARRAY);
+            marcar_ident($1, is_array);
         }
-        */
+        -- FIM DO COMENTÁRIO */
         ((*yyvalp).tipo) = TIPO_INT; /* Tipo padrão por enquanto */
         free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval));
     }
-#line 1991 "parser.tab.c"
+#line 1995 "parser.tab.c"
     break;
 
   case 99: /* primary_expression: ICONST  */
-#line 518 "parser.y"
+#line 522 "parser.y"
     { ((*yyvalp).tipo) = TIPO_INT; }
-#line 1997 "parser.tab.c"
+#line 2001 "parser.tab.c"
     break;
 
   case 100: /* primary_expression: FCONST  */
-#line 520 "parser.y"
+#line 524 "parser.y"
     { ((*yyvalp).tipo) = TIPO_FLOAT; free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval)); }
-#line 2003 "parser.tab.c"
+#line 2007 "parser.tab.c"
     break;
 
   case 101: /* primary_expression: SCONST  */
-#line 522 "parser.y"
+#line 526 "parser.y"
     { ((*yyvalp).tipo) = TIPO_CHAR; free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval)); }
-#line 2009 "parser.tab.c"
+#line 2013 "parser.tab.c"
     break;
 
   case 102: /* primary_expression: T_NULL  */
-#line 524 "parser.y"
+#line 528 "parser.y"
     { ((*yyvalp).tipo) = TIPO_VOID; }
-#line 2015 "parser.tab.c"
+#line 2019 "parser.tab.c"
     break;
 
   case 103: /* primary_expression: LPAREN expression RPAREN  */
-#line 526 "parser.y"
+#line 530 "parser.y"
     { ((*yyvalp).tipo) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.tipo); }
-#line 2021 "parser.tab.c"
+#line 2025 "parser.tab.c"
     break;
 
   case 104: /* expr_ast: assignment_expr_ast  */
-#line 532 "parser.y"
+#line 536 "parser.y"
       { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2027 "parser.tab.c"
+#line 2031 "parser.tab.c"
     break;
 
   case 105: /* assignment_expr_ast: unary_expr_ast ASSIGN expr_ast  */
-#line 537 "parser.y"
+#line 541 "parser.y"
       { 
           printf("[AST] Atribuição detectada: linha %d\n", yylineno);
           ((*yyvalp).ast) = criarAtribuicao((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); 
       }
-#line 2036 "parser.tab.c"
+#line 2040 "parser.tab.c"
     break;
 
   case 106: /* assignment_expr_ast: logical_or_expr_ast  */
-#line 542 "parser.y"
+#line 546 "parser.y"
       { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2042 "parser.tab.c"
+#line 2046 "parser.tab.c"
     break;
 
   case 107: /* logical_or_expr_ast: logical_and_expr_ast  */
-#line 548 "parser.y"
+#line 552 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2048 "parser.tab.c"
+#line 2052 "parser.tab.c"
     break;
 
   case 108: /* logical_or_expr_ast: logical_or_expr_ast OROR logical_and_expr_ast  */
-#line 550 "parser.y"
+#line 554 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_OR, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2054 "parser.tab.c"
+#line 2058 "parser.tab.c"
     break;
 
   case 109: /* logical_and_expr_ast: equality_expr_ast  */
-#line 555 "parser.y"
+#line 559 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2060 "parser.tab.c"
+#line 2064 "parser.tab.c"
     break;
 
   case 110: /* logical_and_expr_ast: logical_and_expr_ast ANDAND equality_expr_ast  */
-#line 557 "parser.y"
+#line 561 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_AND, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2066 "parser.tab.c"
+#line 2070 "parser.tab.c"
     break;
 
   case 111: /* equality_expr_ast: relational_expr_ast  */
-#line 562 "parser.y"
+#line 566 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2072 "parser.tab.c"
+#line 2076 "parser.tab.c"
     break;
 
   case 112: /* equality_expr_ast: equality_expr_ast EQ relational_expr_ast  */
-#line 564 "parser.y"
+#line 568 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_EQ, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2078 "parser.tab.c"
+#line 2082 "parser.tab.c"
     break;
 
   case 113: /* equality_expr_ast: equality_expr_ast NE relational_expr_ast  */
-#line 566 "parser.y"
+#line 570 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_NE, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2084 "parser.tab.c"
+#line 2088 "parser.tab.c"
     break;
 
   case 114: /* relational_expr_ast: additive_expr_ast  */
-#line 571 "parser.y"
+#line 575 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2090 "parser.tab.c"
+#line 2094 "parser.tab.c"
     break;
 
   case 115: /* relational_expr_ast: relational_expr_ast LT additive_expr_ast  */
-#line 573 "parser.y"
+#line 577 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_LT, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2096 "parser.tab.c"
+#line 2100 "parser.tab.c"
     break;
 
   case 116: /* relational_expr_ast: relational_expr_ast LE additive_expr_ast  */
-#line 575 "parser.y"
+#line 579 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_LE, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2102 "parser.tab.c"
+#line 2106 "parser.tab.c"
     break;
 
   case 117: /* relational_expr_ast: relational_expr_ast GT additive_expr_ast  */
-#line 577 "parser.y"
+#line 581 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_GT, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2108 "parser.tab.c"
+#line 2112 "parser.tab.c"
     break;
 
   case 118: /* relational_expr_ast: relational_expr_ast GE additive_expr_ast  */
-#line 579 "parser.y"
+#line 583 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_GE, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2114 "parser.tab.c"
+#line 2118 "parser.tab.c"
     break;
 
   case 119: /* additive_expr_ast: multiplicative_expr_ast  */
-#line 584 "parser.y"
+#line 588 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2120 "parser.tab.c"
+#line 2124 "parser.tab.c"
     break;
 
   case 120: /* additive_expr_ast: additive_expr_ast PLUS multiplicative_expr_ast  */
-#line 586 "parser.y"
+#line 590 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_MAIS, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2126 "parser.tab.c"
+#line 2130 "parser.tab.c"
     break;
 
   case 121: /* additive_expr_ast: additive_expr_ast MINUS multiplicative_expr_ast  */
-#line 588 "parser.y"
+#line 592 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_MENOS, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2132 "parser.tab.c"
+#line 2136 "parser.tab.c"
     break;
 
   case 122: /* multiplicative_expr_ast: unary_expr_ast  */
-#line 593 "parser.y"
+#line 597 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2138 "parser.tab.c"
+#line 2142 "parser.tab.c"
     break;
 
   case 123: /* multiplicative_expr_ast: multiplicative_expr_ast STAR unary_expr_ast  */
-#line 595 "parser.y"
+#line 599 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_MULT, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2144 "parser.tab.c"
+#line 2148 "parser.tab.c"
     break;
 
   case 124: /* multiplicative_expr_ast: multiplicative_expr_ast SLASH unary_expr_ast  */
-#line 597 "parser.y"
+#line 601 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_DIV, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2150 "parser.tab.c"
+#line 2154 "parser.tab.c"
     break;
 
   case 125: /* multiplicative_expr_ast: multiplicative_expr_ast PERCENT unary_expr_ast  */
-#line 599 "parser.y"
+#line 603 "parser.y"
     { ((*yyvalp).ast) = criarOpBinario(OP_MOD, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2156 "parser.tab.c"
+#line 2160 "parser.tab.c"
     break;
 
   case 126: /* unary_expr_ast: postfix_expr_ast  */
-#line 604 "parser.y"
+#line 608 "parser.y"
     { 
         ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast);
     }
-#line 2164 "parser.tab.c"
+#line 2168 "parser.tab.c"
     break;
 
   case 127: /* unary_expr_ast: LPAREN type_spec pointer_opt RPAREN unary_expr_ast  */
-#line 608 "parser.y"
+#line 612 "parser.y"
     { 
         printf("[AST] (CAST) (%s", tipoParaString((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.tipo)));
         if ((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n) > 0) printf(" %*s", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-2)].yystate.yysemantics.yyval.n), "*");
         printf(") ignorado por enquanto\n");
         ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast);  /* apenas propaga a expressão */
     }
-#line 2175 "parser.tab.c"
+#line 2179 "parser.tab.c"
     break;
 
   case 128: /* unary_expr_ast: AMP unary_expr_ast  */
-#line 615 "parser.y"
+#line 619 "parser.y"
     { 
         printf("[AST] Operador & sobre expr tipo %d\n", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast) ? (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast)->tipo : (TipoNoAST)-1);
         ((*yyvalp).ast) = criarOpUnario(OP_UN_ADDR, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); 
     }
-#line 2184 "parser.tab.c"
+#line 2188 "parser.tab.c"
     break;
 
   case 129: /* unary_expr_ast: STAR unary_expr_ast  */
-#line 620 "parser.y"
+#line 624 "parser.y"
     { 
         printf("[AST] Operador * sobre expr tipo %d\n", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast) ? (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast)->tipo : (TipoNoAST)-1);
         ((*yyvalp).ast) = criarOpUnario(OP_UN_DEREF, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); 
     }
-#line 2193 "parser.tab.c"
+#line 2197 "parser.tab.c"
     break;
 
   case 130: /* unary_expr_ast: MINUS unary_expr_ast  */
-#line 625 "parser.y"
+#line 629 "parser.y"
     { 
         printf("[AST] Operador unário - sobre expr tipo %d\n", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast) ? (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast)->tipo : (TipoNoAST)-1);
         ((*yyvalp).ast) = criarOpUnario(OP_UN_MENOS, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); 
     }
-#line 2202 "parser.tab.c"
+#line 2206 "parser.tab.c"
     break;
 
   case 131: /* unary_expr_ast: NOT unary_expr_ast  */
-#line 630 "parser.y"
+#line 634 "parser.y"
     { 
         printf("[AST] Operador ! sobre expr tipo %d\n", (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast) ? (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast)->tipo : (TipoNoAST)-1);
         ((*yyvalp).ast) = criarOpUnario(OP_UN_NOT, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast), yylineno); 
     }
-#line 2211 "parser.tab.c"
+#line 2215 "parser.tab.c"
     break;
 
   case 132: /* postfix_expr_ast: primary_expr_ast  */
-#line 638 "parser.y"
+#line 642 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ast); }
-#line 2217 "parser.tab.c"
+#line 2221 "parser.tab.c"
     break;
 
   case 133: /* postfix_expr_ast: postfix_expr_ast LPAREN argument_expr_list_opt RPAREN  */
-#line 640 "parser.y"
+#line 644 "parser.y"
     { 
         // Extrair nome se for um identificador
         const char *nome = NULL;
@@ -2226,17 +2230,17 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
         }
         ((*yyvalp).ast) = criarChamadaFuncao(nome, (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.ast), yylineno); 
     }
-#line 2230 "parser.tab.c"
+#line 2234 "parser.tab.c"
     break;
 
   case 134: /* postfix_expr_ast: postfix_expr_ast LBRACK expr_ast RBRACK  */
-#line 649 "parser.y"
+#line 653 "parser.y"
     { ((*yyvalp).ast) = criarIndexacao((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-3)].yystate.yysemantics.yyval.ast), (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.ast), yylineno); }
-#line 2236 "parser.tab.c"
+#line 2240 "parser.tab.c"
     break;
 
   case 135: /* primary_expr_ast: IDENT  */
-#line 654 "parser.y"
+#line 658 "parser.y"
     {
         /* Checagem semântica movida para fase posterior
         Simbolo *s = buscarSimbolo($1);
@@ -2249,48 +2253,48 @@ yyuserAction (yyRuleNum yyrule, int yyrhslen, yyGLRStackItem* yyvsp,
         ((*yyvalp).ast) = criarIdentificador((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval), yylineno);
         free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval));
     }
-#line 2253 "parser.tab.c"
+#line 2257 "parser.tab.c"
     break;
 
   case 136: /* primary_expr_ast: ICONST  */
-#line 667 "parser.y"
+#line 671 "parser.y"
     { ((*yyvalp).ast) = criarLiteralInt((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.ival), yylineno); }
-#line 2259 "parser.tab.c"
+#line 2263 "parser.tab.c"
     break;
 
   case 137: /* primary_expr_ast: FCONST  */
-#line 669 "parser.y"
+#line 673 "parser.y"
     { 
         float val = atof((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval));
         ((*yyvalp).ast) = criarLiteralFloat(val, yylineno);
         free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval));
     }
-#line 2269 "parser.tab.c"
+#line 2273 "parser.tab.c"
     break;
 
   case 138: /* primary_expr_ast: SCONST  */
-#line 675 "parser.y"
+#line 679 "parser.y"
     { 
         ((*yyvalp).ast) = criarLiteralString((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval), yylineno);
         free((YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (0)].yystate.yysemantics.yyval.sval));
     }
-#line 2278 "parser.tab.c"
+#line 2282 "parser.tab.c"
     break;
 
   case 139: /* primary_expr_ast: T_NULL  */
-#line 680 "parser.y"
+#line 684 "parser.y"
     { ((*yyvalp).ast) = criarLiteralInt(0, yylineno); }
-#line 2284 "parser.tab.c"
+#line 2288 "parser.tab.c"
     break;
 
   case 140: /* primary_expr_ast: LPAREN expr_ast RPAREN  */
-#line 682 "parser.y"
+#line 686 "parser.y"
     { ((*yyvalp).ast) = (YY_CAST (yyGLRStackItem const *, yyvsp)[YYFILL (-1)].yystate.yysemantics.yyval.ast); }
-#line 2290 "parser.tab.c"
+#line 2294 "parser.tab.c"
     break;
 
 
-#line 2294 "parser.tab.c"
+#line 2298 "parser.tab.c"
 
       default: break;
     }
@@ -3972,7 +3976,7 @@ yypdumpstack (yyGLRStack* yystackp)
 
 
 
-#line 685 "parser.y"
+#line 689 "parser.y"
 
 
 void yyerror(const char* s) {
