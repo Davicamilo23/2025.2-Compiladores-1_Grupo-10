@@ -510,11 +510,11 @@ primary_expression
                 fprintf(stderr, "Aviso (linha %d): Variável '%s' pode não ter sido inicializada.\n", yylineno, $1);
             }
             $$ = s->tipo;
-            /* [SEM] marca IDENT p/ validação de indexação */
+            // [SEM] marca IDENT p/ validação de indexação
             int is_array = (s->categoria == CATEGORIA_ARRAY);
             marcar_ident($1, is_array);
         }
-        */
+        -- FIM DO COMENTÁRIO */
         $$ = TIPO_INT; /* Tipo padrão por enquanto */
         free($1);
     }
