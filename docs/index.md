@@ -1,6 +1,6 @@
-# � Compilador C → Python (Flex & Bison)
+# 👨‍🔧 Compilador C → Python (Flex & Bison)
 
-Este projeto implementa um **compilador que traduz código C para Python** utilizando as ferramentas **Flex** (analisador léxico) e **Bison** (analisador sintático) para a disciplina de Compiladores 1, ministrada pelo professor Dr. Sérgio Antônio no semestre 2025.2, da Faculdade de Ciências e Tecnologia em Engenharia da Universidade de Brasília (FCTE/UnB).
+Este projeto implementa um **compilador que traduz código C para Python**, utilizando **Flex** e **Bison** para a disciplina de Compiladores 1, ministrada pelo professor **Dr. Sérgio Antônio** no semestre **2025.2**, da **Faculdade de Ciências e Tecnologia em Engenharia da Universidade de Brasília (FCTE/UnB)**.
 
 ---
 
@@ -16,87 +16,102 @@ Este projeto implementa um **compilador que traduz código C para Python** utili
 ## ⚙️ Tecnologias Utilizadas
 
 - **C** — linguagem principal de implementação.
-- **Flex** — geração do analisador léxico.
-- **Bison** — geração do analisador sintático.
-- **Makefile** — automação da compilação.
+- **Flex** — gera o analisador léxico.
+- **Bison** — gera o analisador sintático.
+- **Makefile** — automação da compilação e dos testes.
 
 ---
 
-## 🚀 Como Executar
+## 🚀 Como Compilar e Executar
 
-1. Clone o repositório:
+### 1. Compilar o projeto
 
-   ```bash
-   git clone https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10.git
-   cd 2025.2-Compiladores-1_Grupo-10
-   ```
+```bash
+make
+```
 
-2. Compile o projeto com o `make`:
+Durante a compilação:
 
-   ```bash
-   make
-   ```
+- O **Bison** gera `parser.tab.c` e `parser.tab.h`.
+- O **Flex** gera `lex.yy.c`.
+- O **GCC** compila tudo e cria o executável `c2python`.
 
-3. Execute o compilador com um arquivo C:
-   ```bash
-   ./c2python exemplo.c
-   ```
+Saída esperada:
 
----
+```
+🖍️ Gerando parser...
+🖍️ Gerando lexer...
+🔗 Linkando executável...
+✅ Compilação concluída! Executável: c2python
+```
 
-## 🏗️ Arquitetura do Compilador
+### 2. Executar o compilador com um arquivo C
 
-O compilador segue a arquitetura clássica em fases para tradução C → Python:
+```bash
+./c2python exemplo.c
+```
 
-1. **Análise Léxica (scanner)**
+Se a compilação for bem-sucedida, um arquivo `saida.py` será gerado automaticamente:
 
-   - Implementada com **Flex**.
-   - Converte o código fonte C em **tokens**.
+```bash
+🛠️ Compilação concluída!
+Arquivo gerado: saida.py
 
-2. **Análise Sintática (parser)**
+🔹 Para executar o código Python:
+python3 saida.py
+```
 
-   - Implementada com **Bison**.
-   - Verifica se a sequência de tokens respeita a gramática da linguagem C.
+### 3. Executar com entrada direta (modo interativo)
 
-3. **Análise Semântica**
-
-   - Valida regras semânticas (tipagem, variáveis, escopo).
-   - Constrói tabela de símbolos.
-
-4. **Geração de Código Python**
-   - Traduz construções C para equivalentes Python.
-   - Produz código Python funcional e legível.
-
----
-
-## 📖 Especificação da Linguagem
-
-### 🔤 Linguagem-Fonte: C (Subconjunto)
-
-Nosso compilador suporta um subconjunto da linguagem C, incluindo:
-
-- **Tipos básicos**: `int`, `float`, `char`
-- **Estruturas de controle**: `if/else`, `while`, `for`
-- **Funções**: definição e chamada
-- **Expressões**: aritméticas, relacionais, lógicas
-- **Arrays**: unidimensionais básicos
-
-### 🐍 Linguagem-Alvo: Python
-
-O código C é traduzido para Python idiomático, mantendo:
-
-- **Funcionalidade equivalente**
-- **Legibilidade do código**
-- **Estruturas Python apropriadas**
-
-Para mais detalhes, consulte nossa [**Especificação Completa da Linguagem**](linguagem-fonte-c.md).
+```bash
+make run
+```
 
 ---
 
-## 📚 Exemplos de Tradução
+## 📝 Estrutura do Projeto
 
-### Exemplo 1: Programa Simples
+```
+2025.2-Compiladores-1_Grupo-10/
+├── lexer/                # Regras léxicas (Flex)
+│   └── lexer.l
+├── parser/               # Gramática sintática (Bison)
+│   └── parser.y
+├── src/                  # Implementação principal
+│   ├── main.c
+│   ├── gerador_python.c
+│   └── tabela_simbolos/
+│       ├── ast.c
+│       ├── tabela.c
+│       └── erros.c
+├── tests/                # Casos de teste automáticos
+│   ├── exemplo.c
+│   ├── tipos/
+│   └── errors/
+├── run_tests.sh          # Script de testes automáticos
+├── Makefile              # Automação da build e testes
+└── README.md             # Documentação principal
+```
+
+---
+
+## 📊 Arquitetura do Compilador
+
+O compilador segue a arquitetura clássica em quatro fases:
+
+1. **Análise Léxica (Flex)** — converte o código C em _tokens_.
+2. **Análise Sintática (Bison)** — valida a ordem e a estrutura dos tokens.
+3. **Análise Semântica** — verifica tipos, escopo e declarações.
+4. **Geração de Código Python** — cria o código equivalente e legível.
+
+---
+
+## 📖 Exemplos de Tradução
+
+### Exemplo 1: Programa simples
+
 **Entrada (C):**
+
 ```c
 #include <stdio.h>
 
@@ -108,6 +123,7 @@ int main() {
 ```
 
 **Saída (Python):**
+
 ```python
 def main():
     x = 10
@@ -118,8 +134,10 @@ if __name__ == "__main__":
     main()
 ```
 
-### Exemplo 2: Estrutura Condicional
+### Exemplo 2: Estrutura condicional
+
 **Entrada (C):**
+
 ```c
 int maior(int a, int b) {
     if (a > b) {
@@ -131,6 +149,7 @@ int maior(int a, int b) {
 ```
 
 **Saída (Python):**
+
 ```python
 def maior(a, b):
     if a > b:
@@ -141,14 +160,93 @@ def maior(a, b):
 
 ---
 
-## 🧪 Testes e Validação
+## 🤓 Uso do Makefile
 
-O projeto inclui uma suíte abrangente de testes:
+O **Makefile** automatiza todas as etapas do projeto:
 
-- **Testes unitários** para cada fase do compilador
-- **Casos de teste** com programas C representativos
-- **Validação** da equivalência funcional C ↔ Python
-- **Testes de erro** para validar tratamento de exceções
+| Comando             | Ação                                      |
+| ------------------- | ----------------------------------------- |
+| `make`              | Compila todo o projeto                    |
+| `make run`          | Executa o compilador interativamente      |
+| `make test`         | Executa o teste básico com `exemplo.c`    |
+| `make tests`        | Executa toda a suíte automática de testes |
+| `make tests-tipos`  | Executa apenas os testes de tipos         |
+| `make tests-errors` | Executa apenas os testes de erros         |
+| `make clean`        | Remove arquivos compilados                |
+| `make cleanall`     | Remove todos os arquivos e backups        |
+| `make help`         | Mostra os comandos disponíveis            |
+
+---
+
+## 🤖 Testes Automatizados
+
+O script **`run_tests.sh`** executa os casos de teste automaticamente.
+
+### Executar todos os testes
+
+```bash
+make tests
+```
+
+### Executar apenas testes de tipos
+
+```bash
+make tests-tipos
+```
+
+### Executar apenas testes de erro
+
+```bash
+make tests-errors
+```
+
+#### Exemplo de Saída Esperada
+
+```
+== Rodando testes em tests/errors (modo errors) ==
+
+>> TESTE: tests/errors/div_zero.c
+----------------------------------
+✅ OK: falhou como esperado -> tests/errors/div_zero.c
+
+----------------------------------
+RESUMO FINAL: OK=5 | FAIL=0
+----------------------------------
+```
+
+---
+
+## 🛠️ Limpeza
+
+Remover todos os arquivos compilados:
+
+```bash
+make clean
+```
+
+Remover também arquivos temporários e backups:
+
+```bash
+make cleanall
+```
+
+---
+
+## 🧠 Dicas Avançadas
+
+Ver conflitos na gramática:
+
+```bash
+cd parser && bison -d -Wcounterexamples parser.y
+```
+
+Depurar erros de execução:
+
+```bash
+gdb ./c2python
+run exemplo.c
+bt
+```
 
 ---
 
@@ -164,6 +262,10 @@ O projeto inclui uma suíte abrangente de testes:
 
 ---
 
-## 📄 Licença
+## 📜 Licença
 
-Este projeto é distribuído sob a licença MIT.
+Este projeto é distribuído sob a licença **MIT**.
+
+---
+
+**Desenvolvido por:** Grupo 10 • FCTE
