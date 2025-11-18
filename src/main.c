@@ -14,6 +14,7 @@
 #include "tabela_simbolos/tabela.h"
 #include "tabela_simbolos/ast.h"
 #include "gerador_python.h"
+#include "otimizador/otimizador.h"
 
 // Funções do Bison/Flex
 extern int yyparse(void);
@@ -91,6 +92,35 @@ int main(int argc, char *argv[]) {
         passoChecagemSemantica(ast_raiz);
         
         printf("✅ Análise semântica concluída!\n\n");
+        
+        // FASE 3C: OTIMIZAÇÃO
+        printf("🚀 FASE 3C: Otimização (Propagação de Constantes)\n");
+        printf("--------------------------------------\n");
+        
+        // Inicializar tabela de constantes
+        inicializarTabelaConstantes();
+        
+        // Passe 1: Propagação de constantes
+        printf("Passe 1: Propagação de constantes...\n");
+        ast_raiz = passePropagacaoConstantes(ast_raiz);
+        
+        // Passe 2: Constant folding
+        printf("Passe 2: Constant folding...\n");
+        ast_raiz = passeConstantFolding(ast_raiz);
+        
+        // Passe 3: Repetir para fixpoint (propagação em cadeia)
+        printf("Passe 3: Fixpoint (segunda iteração)...\n");
+        ast_raiz = passePropagacaoConstantes(ast_raiz);
+        ast_raiz = passeConstantFolding(ast_raiz);
+        
+        // Exibir estatísticas
+        printf("\n");
+        imprimirEstatisticasOtimizacao();
+        
+        // Limpar tabela de constantes
+        limparTabelaConstantes();
+        
+        printf("✅ Otimização concluída!\n\n");
         
         // FASE 4: GERAÇÃO DE CÓDIGO PYTHON
         printf("🐍 FASE 4: Geração de Código Python\n");

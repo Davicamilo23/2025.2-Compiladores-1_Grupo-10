@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 # Código gerado automaticamente
 
-def main():
-    counter = 0
-    while (counter < 3):
-        print("%d\n", counter, end='')
-        
-    return 0
-
+b = 5
+c = 8
+d = (c * 2)
 
 # Executar main se existir
 if __name__ == '__main__':
