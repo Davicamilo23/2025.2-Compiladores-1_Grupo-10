@@ -14,6 +14,7 @@ static InfoConstante *tabela_constantes[TAM_CONST] = {NULL};
 static int stats_folding = 0;
 static int stats_propagacao = 0;
 static int stats_simplificacao = 0;
+static int stats_codigo_morto = 0;
 
 // Hash simples (reutiliza lógica de tabela.c)
 static unsigned hash_const(const char *s) {
@@ -31,6 +32,7 @@ void inicializarTabelaConstantes(void) {
     stats_folding = 0;
     stats_propagacao = 0;
     stats_simplificacao = 0;
+    stats_codigo_morto = 0;
 }
 
 void limparTabelaConstantes(void) {
@@ -349,8 +351,11 @@ Ast* passeConstantFolding(Ast *ast) {
     }
 }
 
+/* ============================================
+ * PASSO 2: PROPAGAÇÃO DE CONSTANTES
+ * ============================================ */
 
-//Substitui variáveis por valores literais quando possível
+// Substitui variáveis por valores literais quando possível
 Ast* passePropagacaoConstantes(Ast *ast) {
     if (!ast) return NULL;
     
@@ -521,6 +526,10 @@ Ast* passePropagacaoConstantes(Ast *ast) {
             return ast;
     }
 }
+
+/* ============================================
+ * PASSO 3: SIMPLIFICAÇÃO DE EXPRESSÕES
+ * ============================================ */
 
 // Verifica se dois nós AST são equivalentes
 static int nosEquivalentes(Ast *a, Ast *b) {
@@ -906,11 +915,232 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
     }
 }
 
+/* ============================================
+ * PASSO 4: REMOÇÃO DE CÓDIGO MORTO (AST)
+ * ============================================ */
+
+// Expressão tem efeito colateral? (chamada de função, atribuição, etc.)
+static int expressaoTemEfeitoColateral(Ast *ast) {
+    if (!ast) return 0;
+
+    switch (ast->tipo) {
+        case AST_LITERAL_INT:
+        case AST_LITERAL_FLOAT:
+        case AST_LITERAL_CHAR:
+        case AST_IDENTIFICADOR:
+            return 0;
+
+        case AST_OP_BINARIO:
+            return expressaoTemEfeitoColateral(ast->dados.op_binario.esquerda) ||
+                   expressaoTemEfeitoColateral(ast->dados.op_binario.direita);
+
+        case AST_OP_UNARIO:
+            return expressaoTemEfeitoColateral(ast->dados.op_unario.operando);
+
+        case AST_INDEXACAO:
+            return expressaoTemEfeitoColateral(ast->dados.indexacao.array) ||
+                   expressaoTemEfeitoColateral(ast->dados.indexacao.indice);
+
+        case AST_CHAMADA_FUNCAO:
+            // conservador: assumimos sempre efeito colateral
+            return 1;
+
+        case AST_ATRIBUICAO:
+            // atribuição altera estado
+            return 1;
+
+        default:
+            // qualquer nó fora de uma expressão pura tratamos como tendo efeito
+            return 1;
+    }
+}
+
+static Ast* removerCodigoMortoLista(Ast *lista);
+
+// Passada principal de remoção de código morto
+Ast* passeRemocaoCodigoMorto(Ast *ast) {
+    if (!ast) return NULL;
+
+    switch (ast->tipo) {
+        /* ---------- Estruturas com listas de statements ---------- */
+        case AST_PROGRAMA:
+        case AST_BLOCO:
+            if (ast->dados.bloco.statements) {
+                ast->dados.bloco.statements = removerCodigoMortoLista(ast->dados.bloco.statements);
+            }
+            return ast;
+
+        /* ---------- Expression statement: expressão solta ---------- */
+        case AST_EXPR_STMT: {
+            if (ast->dados.bloco.statements) {
+                ast->dados.bloco.statements = passeRemocaoCodigoMorto(ast->dados.bloco.statements);
+            }
+
+            Ast *expr = ast->dados.bloco.statements;
+
+            // Se for uma lista com um único item, pegar o item como expressão
+            if (expr && expr->tipo == AST_LISTA && expr->dados.lista.proximo == NULL) {
+                expr = expr->dados.lista.item;
+            }
+
+            if (!expr || !expressaoTemEfeitoColateral(expr)) {
+                printf("[OPT] Remoção de código morto: expressão sem efeito descartada\n");
+                stats_codigo_morto++;
+                return NULL; // remove o statement inteiro
+            }
+
+            return ast;
+        }
+
+        /* ---------- IF / IF-ELSE com condição constante ---------- */
+        case AST_IF:
+        case AST_IF_ELSE: {
+            if (ast->dados.if_stmt.condicao)
+                ast->dados.if_stmt.condicao = passeRemocaoCodigoMorto(ast->dados.if_stmt.condicao);
+            if (ast->dados.if_stmt.bloco_then)
+                ast->dados.if_stmt.bloco_then = passeRemocaoCodigoMorto(ast->dados.if_stmt.bloco_then);
+            if (ast->dados.if_stmt.bloco_else)
+                ast->dados.if_stmt.bloco_else = passeRemocaoCodigoMorto(ast->dados.if_stmt.bloco_else);
+
+            Ast *cond = ast->dados.if_stmt.condicao;
+            if (cond && cond->tipo == AST_LITERAL_INT) {
+                int v = cond->dados.literal.valor_int;
+
+                if (v == 0) {
+                    if (ast->tipo == AST_IF_ELSE && ast->dados.if_stmt.bloco_else) {
+                        printf("[OPT] Simplificação: if (0) else → else\n");
+                        stats_codigo_morto++;
+                        return ast->dados.if_stmt.bloco_else;
+                    } else {
+                        printf("[OPT] Remoção de código morto: if (0) sem else\n");
+                        stats_codigo_morto++;
+                        return NULL;
+                    }
+                } else {
+                    printf("[OPT] Simplificação: if (1) → then\n");
+                    stats_codigo_morto++;
+                    return ast->dados.if_stmt.bloco_then;
+                }
+            }
+
+            return ast;
+        }
+
+        /* ---------- WHILE com condição constante ---------- */
+        case AST_WHILE:
+            if (ast->dados.while_stmt.condicao)
+                ast->dados.while_stmt.condicao = passeRemocaoCodigoMorto(ast->dados.while_stmt.condicao);
+            if (ast->dados.while_stmt.corpo)
+                ast->dados.while_stmt.corpo = passeRemocaoCodigoMorto(ast->dados.while_stmt.corpo);
+
+            if (ast->dados.while_stmt.condicao &&
+                ast->dados.while_stmt.condicao->tipo == AST_LITERAL_INT &&
+                ast->dados.while_stmt.condicao->dados.literal.valor_int == 0) {
+                printf("[OPT] Remoção de código morto: while (0) descartado\n");
+                stats_codigo_morto++;
+                return NULL;
+            }
+            return ast;
+
+        /* ---------- FOR: apenas propaga DCE para os filhos ---------- */
+        case AST_FOR:
+            if (ast->dados.for_stmt.inicializacao)
+                ast->dados.for_stmt.inicializacao = passeRemocaoCodigoMorto(ast->dados.for_stmt.inicializacao);
+            if (ast->dados.for_stmt.condicao)
+                ast->dados.for_stmt.condicao = passeRemocaoCodigoMorto(ast->dados.for_stmt.condicao);
+            if (ast->dados.for_stmt.incremento)
+                ast->dados.for_stmt.incremento = passeRemocaoCodigoMorto(ast->dados.for_stmt.incremento);
+            if (ast->dados.for_stmt.corpo)
+                ast->dados.for_stmt.corpo = passeRemocaoCodigoMorto(ast->dados.for_stmt.corpo);
+            return ast;
+
+        /* ---------- Statements sempre relevantes (return, atribuição) ---------- */
+        case AST_RETURN:
+            if (ast->dados.return_stmt.expressao)
+                ast->dados.return_stmt.expressao = passeRemocaoCodigoMorto(ast->dados.return_stmt.expressao);
+            return ast;
+
+        case AST_ATRIBUICAO:
+            if (ast->dados.atribuicao.valor)
+                ast->dados.atribuicao.valor = passeRemocaoCodigoMorto(ast->dados.atribuicao.valor);
+            return ast;
+
+        /* ---------- Listas: delega para helper ---------- */
+        case AST_LISTA:
+            return removerCodigoMortoLista(ast);
+
+        /* ---------- Demais nós: só propaga recursão ---------- */
+        case AST_OP_BINARIO:
+            ast->dados.op_binario.esquerda = passeRemocaoCodigoMorto(ast->dados.op_binario.esquerda);
+            ast->dados.op_binario.direita  = passeRemocaoCodigoMorto(ast->dados.op_binario.direita);
+            return ast;
+
+        case AST_OP_UNARIO:
+            ast->dados.op_unario.operando = passeRemocaoCodigoMorto(ast->dados.op_unario.operando);
+            return ast;
+
+        case AST_CHAMADA_FUNCAO:
+            if (ast->dados.chamada.argumentos)
+                ast->dados.chamada.argumentos = passeRemocaoCodigoMorto(ast->dados.chamada.argumentos);
+            return ast;
+
+        case AST_INDEXACAO:
+            if (ast->dados.indexacao.array)
+                ast->dados.indexacao.array  = passeRemocaoCodigoMorto(ast->dados.indexacao.array);
+            if (ast->dados.indexacao.indice)
+                ast->dados.indexacao.indice = passeRemocaoCodigoMorto(ast->dados.indexacao.indice);
+            return ast;
+
+        case AST_DECL_FUNCAO:
+            if (ast->dados.funcao.parametros)
+                ast->dados.funcao.parametros = passeRemocaoCodigoMorto(ast->dados.funcao.parametros);
+            if (ast->dados.funcao.corpo)
+                ast->dados.funcao.corpo      = passeRemocaoCodigoMorto(ast->dados.funcao.corpo);
+            return ast;
+
+        case AST_DECL_VAR:
+            if (ast->dados.declaracao.inicializador)
+                ast->dados.declaracao.inicializador = passeRemocaoCodigoMorto(ast->dados.declaracao.inicializador);
+            return ast;
+
+        default:
+            return ast;
+    }
+}
+
+// Percorre lista de statements, removendo nós cujo item foi eliminado (NULL)
+static Ast* removerCodigoMortoLista(Ast *lista) {
+    if (!lista) return NULL;
+
+    // Otimiza o statement corrente
+    if (lista->dados.lista.item) {
+        lista->dados.lista.item = passeRemocaoCodigoMorto(lista->dados.lista.item);
+    }
+
+    // Otimiza o restante da lista
+    lista->dados.lista.proximo = removerCodigoMortoLista(lista->dados.lista.proximo);
+
+    // Se este nó não tem mais statement (foi removido), pula ele
+    if (!lista->dados.lista.item) {
+        Ast *prox = lista->dados.lista.proximo;
+        stats_codigo_morto++;
+        return prox;
+    }
+
+    return lista;
+}
+
+/* ============================================
+ * ESTATÍSTICAS
+ * ============================================ */
+
 void imprimirEstatisticasOtimizacao(void) {
     printf("\n=== ESTATÍSTICAS DE OTIMIZAÇÃO ===\n");
     printf("Constant folding realizados: %d\n", stats_folding);
-    printf("Propagações de constantes: %d\n", stats_propagacao);
-    printf("Simplificações de expressões: %d\n", stats_simplificacao);
-    printf("Total de otimizações: %d\n", stats_folding + stats_propagacao + stats_simplificacao);
+    printf("Propagações de constantes:   %d\n", stats_propagacao);
+    printf("Simplificações de expressões:%d\n", stats_simplificacao);
+    printf("Remoções de código morto:    %d\n", stats_codigo_morto);
+    printf("Total de otimizações:        %d\n",
+           stats_folding + stats_propagacao + stats_simplificacao + stats_codigo_morto);
     printf("===================================\n\n");
 }

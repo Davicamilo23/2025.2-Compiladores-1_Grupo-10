@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
         printf("✅ Análise semântica concluída!\n\n");
         
         // FASE 3C: OTIMIZAÇÃO
-        printf("🚀 FASE 3C: Otimização (Propagação de Constantes)\n");
+        printf("🚀 FASE 3C: Otimização (Constantes, Simplificação e Código Morto)\n");
         printf("--------------------------------------\n");
         
         // Inicializar tabela de constantes
@@ -111,12 +111,17 @@ int main(int argc, char *argv[]) {
         // Passe 3: Simplificação de expressões
         printf("Passe 3: Simplificação de expressões...\n");
         ast_raiz = passeSimplificacaoExpressoes(ast_raiz);
+
+        // Passe 4: Remoção de código morto
+        printf("Passe 4: Remoção de código morto...\n");
+        ast_raiz = passeRemocaoCodigoMorto(ast_raiz);
         
-        // Passe 4: Repetir para fixpoint (propagação em cadeia)
-        printf("Passe 4: Fixpoint (segunda iteração)...\n");
+        // Passe 5: Repetir para fixpoint (propagação em cadeia)
+        printf("Passe 5: Fixpoint (segunda iteração)...\n");
         ast_raiz = passePropagacaoConstantes(ast_raiz);
         ast_raiz = passeConstantFolding(ast_raiz);
         ast_raiz = passeSimplificacaoExpressoes(ast_raiz);
+        ast_raiz = passeRemocaoCodigoMorto(ast_raiz);
         
         // Exibir estatísticas
         printf("\n");
