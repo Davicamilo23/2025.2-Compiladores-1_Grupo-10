@@ -522,10 +522,7 @@ Ast* passePropagacaoConstantes(Ast *ast) {
     }
 }
 
-/* ============================================
- * FUNÇÃO AUXILIAR: Verifica se dois nós AST são equivalentes
- * (mesmo identificador ou mesmo literal)
- * ============================================ */
+// Verifica se dois nós AST são equivalentes
 static int nosEquivalentes(Ast *a, Ast *b) {
     if (!a || !b) return 0;
     
@@ -556,10 +553,7 @@ static int nosEquivalentes(Ast *a, Ast *b) {
     return 0;
 }
 
-/* ============================================
- * PASSO 3: SIMPLIFICAÇÃO DE EXPRESSÕES
- * Simplifica expressões algébricas básicas
- * ============================================ */
+// Simplifica expressões algébricas básicas
 Ast* passeSimplificacaoExpressoes(Ast *ast) {
     if (!ast) return NULL;
     
@@ -603,7 +597,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_MENOS:  // -
+                case OP_MENOS:
                     // x - 0 → x
                     if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
                         printf("[OPT] Simplificação: x - 0 → x\n");
@@ -627,7 +621,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_MULT:  // *
+                case OP_MULT:
                     // x * 1 → x
                     if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
                         printf("[OPT] Simplificação: x * 1 → x\n");
@@ -690,7 +684,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_DIV:  // /
+                case OP_DIV:
                     // x / 1 → x
                     if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
                         printf("[OPT] Simplificação: x / 1 → x\n");
@@ -714,7 +708,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_EQ:  // ==
+                case OP_EQ:
                     // x == x → 1 (true)
                     if (nosEquivalentes(esq, dir)) {
                         printf("[OPT] Simplificação: x == x → 1\n");
@@ -726,7 +720,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_NE:  // !=
+                case OP_NE:
                     // x != x → 0 (false)
                     if (nosEquivalentes(esq, dir)) {
                         printf("[OPT] Simplificação: x != x → 0\n");
@@ -738,7 +732,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_AND:  // &&
+                case OP_AND:
                     // x && 1 → x (true é representado como 1)
                     if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
                         printf("[OPT] Simplificação: x && 1 → x\n");
@@ -771,7 +765,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                     }
                     break;
                     
-                case OP_OR:  // ||
+                case OP_OR:
                     // x || 0 → x
                     if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
                         printf("[OPT] Simplificação: x || 0 → x\n");
@@ -817,7 +811,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
             
             if (!op) return ast;
             
-            // !(!x) → x (dupla negação)
+            // dupla negação
             if (ast->dados.op_unario.op == OP_UN_NOT && 
                 op->tipo == AST_OP_UNARIO && 
                 op->dados.op_unario.op == OP_UN_NOT) {
@@ -826,7 +820,7 @@ Ast* passeSimplificacaoExpressoes(Ast *ast) {
                 return op->dados.op_unario.operando;
             }
             
-            // -(-x) → x (dupla negação aritmética)
+            // dupla negação aritmética
             if (ast->dados.op_unario.op == OP_UN_MENOS && 
                 op->tipo == AST_OP_UNARIO && 
                 op->dados.op_unario.op == OP_UN_MENOS) {
