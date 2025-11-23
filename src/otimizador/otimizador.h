@@ -57,6 +57,15 @@ Ast* passePropagacaoConstantes(Ast *ast);
  */
 Ast* passeConstantFolding(Ast *ast);
 
+/**
+ * Passo de simplificação de expressões
+ * - Simplifica expressões algébricas básicas
+ * 
+ * @param ast Nó da AST a otimizar
+ * @return AST otimizada (pode ser o mesmo nó ou novo nó)
+ */
+Ast* passeSimplificacaoExpressoes(Ast *ast);
+
 void imprimirEstatisticasOtimizacao(void);
 
 #endif 

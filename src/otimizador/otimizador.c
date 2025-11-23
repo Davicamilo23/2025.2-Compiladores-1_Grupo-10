@@ -13,6 +13,7 @@ static InfoConstante *tabela_constantes[TAM_CONST] = {NULL};
 // Contadores de estatísticas
 static int stats_folding = 0;
 static int stats_propagacao = 0;
+static int stats_simplificacao = 0;
 
 // Hash simples (reutiliza lógica de tabela.c)
 static unsigned hash_const(const char *s) {
@@ -29,6 +30,7 @@ void inicializarTabelaConstantes(void) {
     }
     stats_folding = 0;
     stats_propagacao = 0;
+    stats_simplificacao = 0;
 }
 
 void limparTabelaConstantes(void) {
@@ -520,11 +522,395 @@ Ast* passePropagacaoConstantes(Ast *ast) {
     }
 }
 
+// Verifica se dois nós AST são equivalentes
+static int nosEquivalentes(Ast *a, Ast *b) {
+    if (!a || !b) return 0;
+    
+    // Ambos são identificadores com mesmo nome
+    if (a->tipo == AST_IDENTIFICADOR && b->tipo == AST_IDENTIFICADOR) {
+        const char *nome_a = a->dados.identificador.nome;
+        const char *nome_b = b->dados.identificador.nome;
+        if (nome_a && nome_b && strcmp(nome_a, nome_b) == 0) {
+            return 1;
+        }
+    }
+    
+    // Ambos são literais int com mesmo valor
+    if (a->tipo == AST_LITERAL_INT && b->tipo == AST_LITERAL_INT) {
+        return a->dados.literal.valor_int == b->dados.literal.valor_int;
+    }
+    
+    // Ambos são literais float com mesmo valor
+    if (a->tipo == AST_LITERAL_FLOAT && b->tipo == AST_LITERAL_FLOAT) {
+        return a->dados.literal.valor_float == b->dados.literal.valor_float;
+    }
+    
+    // Ambos são literais char com mesmo valor
+    if (a->tipo == AST_LITERAL_CHAR && b->tipo == AST_LITERAL_CHAR) {
+        return a->dados.literal.valor_char == b->dados.literal.valor_char;
+    }
+    
+    return 0;
+}
+
+// Simplifica expressões algébricas básicas
+Ast* passeSimplificacaoExpressoes(Ast *ast) {
+    if (!ast) return NULL;
+    
+    switch (ast->tipo) {
+        case AST_OP_BINARIO: {
+            // Recursivamente simplificar operandos primeiro
+            ast->dados.op_binario.esquerda = passeSimplificacaoExpressoes(ast->dados.op_binario.esquerda);
+            ast->dados.op_binario.direita = passeSimplificacaoExpressoes(ast->dados.op_binario.direita);
+            
+            Ast *esq = ast->dados.op_binario.esquerda;
+            Ast *dir = ast->dados.op_binario.direita;
+            
+            if (!esq || !dir) return ast;
+            
+            // Simplificações para operações aritméticas
+            switch (ast->dados.op_binario.op) {
+                case OP_MAIS:  // +
+                    // x + 0 → x
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: x + 0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 0 + x → x
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: 0 + x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    // x + 0.0 → x (float)
+                    if (dir->tipo == AST_LITERAL_FLOAT && dir->dados.literal.valor_float == 0.0f) {
+                        printf("[OPT] Simplificação: x + 0.0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 0.0 + x → x (float)
+                    if (esq->tipo == AST_LITERAL_FLOAT && esq->dados.literal.valor_float == 0.0f) {
+                        printf("[OPT] Simplificação: 0.0 + x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    break;
+                    
+                case OP_MENOS:
+                    // x - 0 → x
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: x - 0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // x - 0.0 → x (float)
+                    if (dir->tipo == AST_LITERAL_FLOAT && dir->dados.literal.valor_float == 0.0f) {
+                        printf("[OPT] Simplificação: x - 0.0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // x - x → 0
+                    if (nosEquivalentes(esq, dir)) {
+                        printf("[OPT] Simplificação: x - x → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_MULT:
+                    // x * 1 → x
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: x * 1 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 1 * x → x
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: 1 * x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    // x * 1.0 → x (float)
+                    if (dir->tipo == AST_LITERAL_FLOAT && dir->dados.literal.valor_float == 1.0f) {
+                        printf("[OPT] Simplificação: x * 1.0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 1.0 * x → x (float)
+                    if (esq->tipo == AST_LITERAL_FLOAT && esq->dados.literal.valor_float == 1.0f) {
+                        printf("[OPT] Simplificação: 1.0 * x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    // x * 0 → 0
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: x * 0 → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    // 0 * x → 0
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: 0 * x → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    // x * 0.0 → 0.0 (float)
+                    if (dir->tipo == AST_LITERAL_FLOAT && dir->dados.literal.valor_float == 0.0f) {
+                        printf("[OPT] Simplificação: x * 0.0 → 0.0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitFloat(0.0f);
+                        novo->tipo_dado = TIPO_FLOAT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    // 0.0 * x → 0.0 (float)
+                    if (esq->tipo == AST_LITERAL_FLOAT && esq->dados.literal.valor_float == 0.0f) {
+                        printf("[OPT] Simplificação: 0.0 * x → 0.0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitFloat(0.0f);
+                        novo->tipo_dado = TIPO_FLOAT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_DIV:
+                    // x / 1 → x
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: x / 1 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // x / 1.0 → x (float)
+                    if (dir->tipo == AST_LITERAL_FLOAT && dir->dados.literal.valor_float == 1.0f) {
+                        printf("[OPT] Simplificação: x / 1.0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // x / x → 1 (apenas se não for zero)
+                    if (nosEquivalentes(esq, dir)) {
+                        printf("[OPT] Simplificação: x / x → 1\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(1);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_EQ:
+                    // x == x → 1 (true)
+                    if (nosEquivalentes(esq, dir)) {
+                        printf("[OPT] Simplificação: x == x → 1\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(1);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_NE:
+                    // x != x → 0 (false)
+                    if (nosEquivalentes(esq, dir)) {
+                        printf("[OPT] Simplificação: x != x → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_AND:
+                    // x && 1 → x (true é representado como 1)
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: x && 1 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 1 && x → x
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: 1 && x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    // x && 0 → 0
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: x && 0 → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    // 0 && x → 0
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: 0 && x → 0\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(0);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                case OP_OR:
+                    // x || 0 → x
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: x || 0 → x\n");
+                        stats_simplificacao++;
+                        return esq;
+                    }
+                    // 0 || x → x
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 0) {
+                        printf("[OPT] Simplificação: 0 || x → x\n");
+                        stats_simplificacao++;
+                        return dir;
+                    }
+                    // x || 1 → 1
+                    if (dir->tipo == AST_LITERAL_INT && dir->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: x || 1 → 1\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(1);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    // 1 || x → 1
+                    if (esq->tipo == AST_LITERAL_INT && esq->dados.literal.valor_int == 1) {
+                        printf("[OPT] Simplificação: 1 || x → 1\n");
+                        stats_simplificacao++;
+                        Ast *novo = criarLitInt(1);
+                        novo->tipo_dado = TIPO_INT;
+                        novo->linha = ast->linha;
+                        return novo;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            return ast;
+        }
+        
+        case AST_OP_UNARIO: {
+            ast->dados.op_unario.operando = passeSimplificacaoExpressoes(ast->dados.op_unario.operando);
+            Ast *op = ast->dados.op_unario.operando;
+            
+            if (!op) return ast;
+            
+            // dupla negação
+            if (ast->dados.op_unario.op == OP_UN_NOT && 
+                op->tipo == AST_OP_UNARIO && 
+                op->dados.op_unario.op == OP_UN_NOT) {
+                printf("[OPT] Simplificação: !(!x) → x\n");
+                stats_simplificacao++;
+                return op->dados.op_unario.operando;
+            }
+            
+            // dupla negação aritmética
+            if (ast->dados.op_unario.op == OP_UN_MENOS && 
+                op->tipo == AST_OP_UNARIO && 
+                op->dados.op_unario.op == OP_UN_MENOS) {
+                printf("[OPT] Simplificação: -(-x) → x\n");
+                stats_simplificacao++;
+                return op->dados.op_unario.operando;
+            }
+            
+            return ast;
+        }
+        
+        case AST_LISTA:
+            if (ast->dados.lista.item)
+                ast->dados.lista.item = passeSimplificacaoExpressoes(ast->dados.lista.item);
+            if (ast->dados.lista.proximo)
+                ast->dados.lista.proximo = passeSimplificacaoExpressoes(ast->dados.lista.proximo);
+            return ast;
+            
+        case AST_DECL_VAR:
+            if (ast->dados.declaracao.inicializador)
+                ast->dados.declaracao.inicializador = passeSimplificacaoExpressoes(ast->dados.declaracao.inicializador);
+            return ast;
+            
+        case AST_ATRIBUICAO:
+            if (ast->dados.atribuicao.valor)
+                ast->dados.atribuicao.valor = passeSimplificacaoExpressoes(ast->dados.atribuicao.valor);
+            return ast;
+            
+        case AST_IF:
+        case AST_IF_ELSE:
+            if (ast->dados.if_stmt.condicao)
+                ast->dados.if_stmt.condicao = passeSimplificacaoExpressoes(ast->dados.if_stmt.condicao);
+            if (ast->dados.if_stmt.bloco_then)
+                ast->dados.if_stmt.bloco_then = passeSimplificacaoExpressoes(ast->dados.if_stmt.bloco_then);
+            if (ast->dados.if_stmt.bloco_else)
+                ast->dados.if_stmt.bloco_else = passeSimplificacaoExpressoes(ast->dados.if_stmt.bloco_else);
+            return ast;
+            
+        case AST_WHILE:
+            if (ast->dados.while_stmt.condicao)
+                ast->dados.while_stmt.condicao = passeSimplificacaoExpressoes(ast->dados.while_stmt.condicao);
+            if (ast->dados.while_stmt.corpo)
+                ast->dados.while_stmt.corpo = passeSimplificacaoExpressoes(ast->dados.while_stmt.corpo);
+            return ast;
+            
+        case AST_FOR:
+            if (ast->dados.for_stmt.inicializacao)
+                ast->dados.for_stmt.inicializacao = passeSimplificacaoExpressoes(ast->dados.for_stmt.inicializacao);
+            if (ast->dados.for_stmt.condicao)
+                ast->dados.for_stmt.condicao = passeSimplificacaoExpressoes(ast->dados.for_stmt.condicao);
+            if (ast->dados.for_stmt.incremento)
+                ast->dados.for_stmt.incremento = passeSimplificacaoExpressoes(ast->dados.for_stmt.incremento);
+            if (ast->dados.for_stmt.corpo)
+                ast->dados.for_stmt.corpo = passeSimplificacaoExpressoes(ast->dados.for_stmt.corpo);
+            return ast;
+            
+        case AST_RETURN:
+            if (ast->dados.return_stmt.expressao)
+                ast->dados.return_stmt.expressao = passeSimplificacaoExpressoes(ast->dados.return_stmt.expressao);
+            return ast;
+            
+        case AST_BLOCO:
+        case AST_PROGRAMA:
+        case AST_EXPR_STMT:
+            if (ast->dados.bloco.statements)
+                ast->dados.bloco.statements = passeSimplificacaoExpressoes(ast->dados.bloco.statements);
+            return ast;
+            
+        case AST_CHAMADA_FUNCAO:
+            if (ast->dados.chamada.argumentos)
+                ast->dados.chamada.argumentos = passeSimplificacaoExpressoes(ast->dados.chamada.argumentos);
+            return ast;
+            
+        case AST_INDEXACAO:
+            if (ast->dados.indexacao.array)
+                ast->dados.indexacao.array = passeSimplificacaoExpressoes(ast->dados.indexacao.array);
+            if (ast->dados.indexacao.indice)
+                ast->dados.indexacao.indice = passeSimplificacaoExpressoes(ast->dados.indexacao.indice);
+            return ast;
+            
+        default:
+            return ast;
+    }
+}
 
 void imprimirEstatisticasOtimizacao(void) {
     printf("\n=== ESTATÍSTICAS DE OTIMIZAÇÃO ===\n");
     printf("Constant folding realizados: %d\n", stats_folding);
     printf("Propagações de constantes: %d\n", stats_propagacao);
-    printf("Total de otimizações: %d\n", stats_folding + stats_propagacao);
+    printf("Simplificações de expressões: %d\n", stats_simplificacao);
+    printf("Total de otimizações: %d\n", stats_folding + stats_propagacao + stats_simplificacao);
     printf("===================================\n\n");
 }
