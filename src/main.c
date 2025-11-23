@@ -108,10 +108,15 @@ int main(int argc, char *argv[]) {
         printf("Passe 2: Constant folding...\n");
         ast_raiz = passeConstantFolding(ast_raiz);
         
-        // Passe 3: Repetir para fixpoint (propagação em cadeia)
-        printf("Passe 3: Fixpoint (segunda iteração)...\n");
+        // Passe 3: Simplificação de expressões
+        printf("Passe 3: Simplificação de expressões...\n");
+        ast_raiz = passeSimplificacaoExpressoes(ast_raiz);
+        
+        // Passe 4: Repetir para fixpoint (propagação em cadeia)
+        printf("Passe 4: Fixpoint (segunda iteração)...\n");
         ast_raiz = passePropagacaoConstantes(ast_raiz);
         ast_raiz = passeConstantFolding(ast_raiz);
+        ast_raiz = passeSimplificacaoExpressoes(ast_raiz);
         
         // Exibir estatísticas
         printf("\n");
