@@ -5,7 +5,7 @@ nav:
   - Home: index.md
   - Sobre o Projeto: sobre.md
   - Guia de Instalação e Uso: guia-instalacao-uso.md
-  - Manual Técnico: MANUAL_TECNICO.md
+  - Manual Técnico: manual-tecnico.md
   - Tokens e Estrutura: linguagem-fonte-c.md
   - Sprint 1:
     - Sumário: SUMARIO_EXECUTIVO.md
