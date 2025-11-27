@@ -22,6 +22,40 @@ Este projeto implementa um **compilador que traduz código C para Python**, util
 
 ---
 
+## 📦 Instalação e Dependências
+
+Antes de compilar o projeto, certifique-se de ter instalado:
+
+- **GCC** (compilador C)
+- **Flex** (analisador léxico)
+- **Bison** (gerador de parser)
+- **Make** (automação de build)
+- **Python 3** (para executar o código gerado)
+
+### Linux (Ubuntu/Debian)
+
+```bash
+sudo apt update
+sudo apt install build-essential flex bison python3 make
+```
+
+### macOS (Homebrew)
+
+```bash
+brew install flex bison python
+```
+
+> Em alguns sistemas, pode ser necessário ajustar o `PATH` para usar as versões do `flex`/`bison` instaladas pelo Homebrew.
+
+### Windows
+
+Em Windows, recomenda-se:
+
+- Instalar o **MSYS2** ou **WSL (Ubuntu)**.
+- Dentro do ambiente Linux, usar os mesmos comandos de instalação para Ubuntu/Debian.
+
+---
+
 ## 🚀 Como Compilar e Executar
 
 ### 1. Compilar o projeto
@@ -164,45 +198,73 @@ def maior(a, b):
 
 O **Makefile** automatiza todas as etapas do projeto:
 
-| Comando             | Ação                                      |
-| ------------------- | ----------------------------------------- |
-| `make`              | Compila todo o projeto                    |
-| `make run`          | Executa o compilador interativamente      |
-| `make test`         | Executa o teste básico com `exemplo.c`    |
-| `make tests`        | Executa toda a suíte automática de testes |
-| `make tests-tipos`  | Executa apenas os testes de tipos         |
-| `make tests-errors` | Executa apenas os testes de erros         |
-| `make clean`        | Remove arquivos compilados                |
-| `make cleanall`     | Remove todos os arquivos e backups        |
-| `make help`         | Mostra os comandos disponíveis            |
-
----
+| Comando               | Ação                                              |
+| --------------------- | ------------------------------------------------- |
+| `make`                | Compila todo o projeto                            |
+| `make run`            | Executa o compilador interativamente              |
+| `make test`           | Executa o teste básico com `exemplo.c`            |
+| `make tests`          | Executa toda a suíte automática de testes         |
+| `make tests-tipos`    | Executa apenas os testes de tipos                 |
+| `make tests-errors`   | Executa apenas os testes de erros                 |
+| `make tests-otimizacao` | Executa apenas os testes de otimização          |
+| `make tests-lexer`    | Executa apenas os testes de léxico (Flex)         |
+| `make tests-ast`      | Executa apenas os testes de AST                   |
+| `make tests-exec`     | Executa apenas os testes de execução (C → Python) |
+| `make clean`          | Remove arquivos compilados                        |
+| `make cleanall`       | Remove todos os arquivos e backups                |
+| `make help`           | Mostra os comandos disponíveis                    |
 
 ## 🤖 Testes Automatizados
 
-O script **`run_tests.sh`** executa os casos de teste automaticamente.
+O script **`run_tests.sh`** executa os casos de teste automaticamente, e o Makefile expõe alvos específicos para cada categoria de teste.
 
-### Executar todos os testes
+### Executar todos os testes principais
 
 ```bash
 make tests
 ```
 
-### Executar apenas testes de tipos
+### Testes por categoria
 
-```bash
-make tests-tipos
-```
+- **Tipos e semântica básica**
 
-### Executar apenas testes de erro
+  ```bash
+  make tests-tipos
+  ```
 
-```bash
-make tests-errors
-```
+- **Erros sintáticos/semânticos (devem falhar)**
 
-#### Exemplo de Saída Esperada
+  ```bash
+  make tests-errors
+  ```
 
-```
+- **Otimização (propagação de constantes, constant folding, etc.)**
+
+  ```bash
+  make tests-otimizacao
+  ```
+
+- **Léxico (Flex) — tokens, identificadores e literais**
+
+  ```bash
+  make tests-lexer
+  ```
+
+- **AST — valida a estrutura da Árvore Sintática Abstrata**
+
+  ```bash
+  make tests-ast
+  ```
+
+- **Execução fim-a-fim (C → Python → saída)**
+
+  ```bash
+  make tests-exec
+  ```
+
+#### Exemplo de Saída Esperada (testes de erro)
+
+```text
 == Rodando testes em tests/errors (modo errors) ==
 
 >> TESTE: tests/errors/div_zero.c
@@ -213,9 +275,6 @@ make tests-errors
 RESUMO FINAL: OK=5 | FAIL=0
 ----------------------------------
 ```
-
----
-
 ## 🛠️ Limpeza
 
 Remover todos os arquivos compilados:
