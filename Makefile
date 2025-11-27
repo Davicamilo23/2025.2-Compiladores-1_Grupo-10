@@ -125,6 +125,38 @@ tests-otimizacao: $(TARGET)
 		echo "⚠️  Script de testes de otimização não encontrado."; \
 	fi
 
+
+# Testes de léxico (Flex)
+tests-lexer: $(TARGET)
+	@echo "🧪 Rodando testes de léxico (Flex)..."
+	@if [ -f tests/run_lexer_tests.sh ]; then \
+		chmod +x tests/run_lexer_tests.sh; \
+		./tests/run_lexer_tests.sh; \
+	else \
+		echo "⚠️  Script 'tests/run_lexer_tests.sh' não encontrado."; \
+	fi
+
+# Testes de AST (estrutura da árvore)
+tests-ast: $(TARGET)
+	@echo "🧪 Rodando testes de AST..."
+	@if [ -f tests/run_ast_tests.sh ]; then \
+		chmod +x tests/run_ast_tests.sh; \
+		./tests/run_ast_tests.sh; \
+	else \
+		echo "⚠️  Script 'tests/run_ast_tests.sh' não encontrado."; \
+	fi
+
+# Testes de execução (C → Python → saída)
+tests-exec: $(TARGET)
+	@echo "🧪 Rodando testes de execução (C → Python)..."
+	@if [ -f tests/run_exec_tests.sh ]; then \
+		chmod +x tests/run_exec_tests.sh; \
+		./tests/run_exec_tests.sh; \
+	else \
+		echo "⚠️  Script 'tests/run_exec_tests.sh' não encontrado."; \
+	fi
+
+
 # ============================================================
 # ▶️ Execução manual
 # ============================================================
@@ -143,19 +175,22 @@ help:
 	@echo "======================================"
 	@echo ""
 	@echo "Comandos disponíveis:"
-	@echo "  make             - Compila o projeto"
-	@echo "  make clean       - Remove arquivos gerados"
-	@echo "  make cleanall    - Remove tudo (incluindo backups)"
-	@echo "  make test        - Executa um teste simples (exemplo.c)"
-	@echo "  make tests          - Executa toda a suíte automática (run_tests.sh)"
-	@echo "  make tests-tipos    - Executa apenas os testes de tipos"
-	@echo "  make tests-errors   - Executa apenas os testes de erro"
+	@echo "  make               - Compila o projeto"
+	@echo "  make clean         - Remove arquivos gerados"
+	@echo "  make cleanall      - Remove tudo (incluindo backups)"
+	@echo "  make test          - Executa um teste simples (exemplo.c)"
+	@echo "  make tests         - Executa toda a suíte automática (run_tests.sh)"
+	@echo "  make tests-tipos   - Executa apenas os testes de tipos"
+	@echo "  make tests-errors  - Executa apenas os testes de erro"
 	@echo "  make tests-otimizacao - Executa apenas os testes de otimização"
-	@echo "  make run            - Executa o compilador manualmente"
-	@echo "  make help        - Mostra esta ajuda"
+	@echo "  make tests-lexer   - Executa apenas os testes de léxico (Flex)"
+	@echo "  make tests-ast     - Executa apenas os testes de AST"
+	@echo "  make tests-exec    - Executa apenas os testes de execução (C → Python)"
+	@echo "  make run           - Executa o compilador manualmente"
+	@echo "  make help          - Mostra esta ajuda"
 	@echo ""
 
 # ============================================================
 # Alvos não vinculados a arquivos
 # ============================================================
-.PHONY: all clean cleanall test tests tests-tipos tests-errors tests-otimizacao run help
+.PHONY: all clean cleanall test tests tests-tipos tests-errors tests-otimizacao tests-lexer tests-ast tests-exec run help
