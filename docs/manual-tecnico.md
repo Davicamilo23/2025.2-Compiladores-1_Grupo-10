@@ -135,20 +135,6 @@ A tabela de símbolos utiliza uma hash table para armazenar informações sobre 
 
 ## Decisões de Design
 
-### Escolha de Ferramentas
-
-**Flex e Bison:**
-- Ferramentas maduras e amplamente utilizadas
-- Geração automática de analisadores eficientes
-- Facilita manutenção e extensão da gramática
-- Suporte a debugging através de opções de compilação
-
-**Linguagem C:**
-- Controle direto sobre memória e estruturas de dados
-- Performance adequada para compiladores
-- Compatibilidade com Flex e Bison
-- Facilita implementação de estruturas de dados complexas
-
 ### Arquitetura em Fases
 
 A separação clara entre fases permite:
