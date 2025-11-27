@@ -4,7 +4,7 @@ repo_url: https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10
 nav:
   - Home: index.md
   - Sobre o Projeto: sobre.md
-  - Manual Técnico: MANUAL_TECNICO.md
+  - Manual Técnico: manual-tecnico.md
   - Tokens e Estrutura: linguagem-fonte-c.md
   - Sprint 1:
     - Sumário: SUMARIO_EXECUTIVO.md
