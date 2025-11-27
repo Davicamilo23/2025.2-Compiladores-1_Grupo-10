@@ -1,0 +1,2136 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../CHANGELOG/">
+      
+      
+        <link rel="next" href="../atas/ata01/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Guia - Grupo 10 - Compiladores 1</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Poppins";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-de-testes-compilador-suite-portada-para-c" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-header__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grupo 10 - Compiladores 1
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Guia
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sobre/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sobre o Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia-instalacao-uso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Instalação e Uso
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../manual-tecnico/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual Técnico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../linguagem-fonte-c/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tokens e Estrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../SUMARIO_EXECUTIVO/" class="md-tabs__link">
+          
+  
+  
+  Sprint 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Testes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../atas/ata01/" class="md-tabs__link">
+          
+  
+  
+  Atas
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-nav__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Grupo 10 - Compiladores 1
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sobre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sobre o Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia-instalacao-uso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Instalação e Uso
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-tecnico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Técnico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linguagem-fonte-c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokens e Estrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprint 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sprint 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SUMARIO_EXECUTIVO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sumário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCUMENTACAO_SPRINT1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detalhes Técnicos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-executar-os-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como Executar os Testes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como Executar os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inicio-rapido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Início Rápido
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📁 Estrutura de Testes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-teste-que-funcionam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Casos de Teste que Funcionam
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Casos de Teste que Funcionam">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#atribuicoes-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atribuições Simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes-aritmeticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões Aritméticas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes-logicas-comparacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões Lógicas / Comparações
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#saida-com-printf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saída com printf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controle-de-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controle de Fluxo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ponteiros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ponteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-erro-diagnostico-do-compilador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❌ Casos de Erro (diagnóstico do compilador)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-testar-manualmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Como Testar Manualmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Como Testar Manualmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-teste-direto-de-um-arquivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 1: Teste direto de um arquivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-2-outro-arquivo-especifico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 2: Outro arquivo específico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-3-suite-completa-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 3: Suíte completa (scripts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultados-esperados-exemplos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resultados Esperados (exemplos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resultados Esperados (exemplos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teste-bem-sucedido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste Bem-Sucedido
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-com-condicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste com Condicional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-com-blocos-aninhados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste com Blocos Aninhados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ponteiros_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ponteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-de-erro-compilacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso de Erro (compilação)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solucao-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🐛 Solução de Problemas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🐛 Solução de Problemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-not-found-ao-rodar-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        “command not found” ao rodar script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compilacao-falha-por-falta-de-gccclang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilação falha por falta de GCC/Clang
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-de-linkagem-ou-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros de linkagem ou flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissoes-no-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissões no repositório
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expandindo-os-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📈 Expandindo os Testes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 Expandindo os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criar-um-novo-teste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Criar um novo teste
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adicionar-ao-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adicionar ao script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Checklist de Testes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suporte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Suporte
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atas
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Atas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-executar-os-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como Executar os Testes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Como Executar os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#inicio-rapido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚀 Início Rápido
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📁 Estrutura de Testes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-teste-que-funcionam" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ✅ Casos de Teste que Funcionam
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="✅ Casos de Teste que Funcionam">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#atribuicoes-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atribuições Simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes-aritmeticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões Aritméticas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes-logicas-comparacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões Lógicas / Comparações
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#saida-com-printf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saída com printf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#controle-de-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Controle de Fluxo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ponteiros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ponteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-erro-diagnostico-do-compilador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ❌ Casos de Erro (diagnóstico do compilador)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#como-testar-manualmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Como Testar Manualmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Como Testar Manualmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#metodo-1-teste-direto-de-um-arquivo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 1: Teste direto de um arquivo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-2-outro-arquivo-especifico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 2: Outro arquivo específico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metodo-3-suite-completa-scripts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Método 3: Suíte completa (scripts)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultados-esperados-exemplos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Resultados Esperados (exemplos)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Resultados Esperados (exemplos)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teste-bem-sucedido" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste Bem-Sucedido
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-com-condicional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste com Condicional
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-com-blocos-aninhados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste com Blocos Aninhados
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ponteiros_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ponteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loop" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loop
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caso-de-erro-compilacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caso de Erro (compilação)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solucao-de-problemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🐛 Solução de Problemas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🐛 Solução de Problemas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-not-found-ao-rodar-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        “command not found” ao rodar script
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compilacao-falha-por-falta-de-gccclang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilação falha por falta de GCC/Clang
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-de-linkagem-ou-flags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros de linkagem ou flags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissoes-no-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Permissões no repositório
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expandindo-os-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📈 Expandindo os Testes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📈 Expandindo os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#criar-um-novo-teste" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Criar um novo teste
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adicionar-ao-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adicionar ao script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#checklist-de-testes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Checklist de Testes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suporte" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📞 Suporte
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="./" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Testes
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="guia-de-testes-compilador-suite-portada-para-c">🧪 Guia de Testes — Compilador (suíte portada para <strong>C</strong>)</h1>
+<blockquote>
+<p>Esta versão migra os testes que estavam em Python para <strong>C</strong>, mantendo a mesma intenção de verificação (incluindo casos de <strong>erro</strong>). Cada teste é um programa com <code>main()</code> e validação via <code>printf</code>.</p>
+</blockquote>
+<hr />
+<h2 id="como-executar-os-testes">Como Executar os Testes</h2>
+<h3 id="inicio-rapido">🚀 Início Rápido</h3>
+<ol>
+<li>
+<p><strong>(Opcional) Compilar o projeto principal</strong>
+   <code>bash
+   make clean &amp;&amp; make</code></p>
+</li>
+<li>
+<p><strong>Executar a bateria de testes em C</strong>
+   <code>bash
+   chmod +x run_c_tests.sh
+   ./run_c_tests.sh</code></p>
+</li>
+<li>
+<p><strong>Verificar os casos de erro (espera-se falha na compilação)</strong>
+   <code>bash
+   chmod +x test_c_errors.sh
+   ./test_c_errors.sh</code></p>
+</li>
+</ol>
+<hr />
+<h2 id="estrutura-de-testes">📁 Estrutura de Testes</h2>
+<pre><code>tests_c/
+├── test_basic.c
+├── test_function.c
+├── test_if.c
+├── test_if_else.c
+├── test_if_elif_else.c
+├── test_if_flat.c
+├── test_if_simple.c
+├── test_nested_blocks.c
+├── test_print.c
+├── test_ptr_arith.c
+├── test_ptr_chain.c
+├── test_ptr_decl_assign.c
+├── test_ptr_if_while.c
+├── test_scope.c
+├── test_simple.c
+├── test_while.c
+└── errors/
+    ├── div_zero.c
+    ├── dois_pontos_ausente.c
+    ├── erro_de_ortografia.c
+    ├── mal_identacao.c
+    ├── tipo_incorreto.c
+    └── variavel_desconhecida.c
+
+Scripts:
+├── run_c_tests.sh      # compila e executa os testes &quot;válidos&quot;
+└── test_c_errors.sh    # confirma que os casos em errors/ falham na compilação
+</code></pre>
+<hr />
+<h2 id="casos-de-teste-que-funcionam">✅ Casos de Teste que Funcionam</h2>
+<h3 id="atribuicoes-simples"><strong>Atribuições Simples</strong></h3>
+<pre><code class="language-c">int x = 10;
+int y = 20;
+int z = x + y;
+</code></pre>
+<h3 id="expressoes-aritmeticas"><strong>Expressões Aritméticas</strong></h3>
+<pre><code class="language-c">int resultado = 5 + 3 * 2;
+int valor = (10 + 5) * 2;
+int resto = 42 % 5;
+</code></pre>
+<h3 id="expressoes-logicas-comparacoes"><strong>Expressões Lógicas / Comparações</strong></h3>
+<pre><code class="language-c">int x = 5, y = 10;
+int maior  = x &gt; y;     // 0
+int igual  = x == y;    // 0
+int menorE = x &lt;= y;    // 1
+</code></pre>
+<h3 id="saida-com-printf"><strong>Saída com <code>printf</code></strong></h3>
+<pre><code class="language-c">printf(&quot;Hello World\n&quot;);
+printf(&quot;z=%d\n&quot;, z);
+</code></pre>
+<h3 id="controle-de-fluxo"><strong>Controle de Fluxo</strong></h3>
+<pre><code class="language-c">if (x &gt; 0) printf(&quot;Positivo\n&quot;);
+
+int counter = 0;
+while (counter &lt; 3) {
+    printf(&quot;%d\n&quot;, counter);
+    counter++;
+}
+</code></pre>
+<h3 id="funcoes"><strong>Funções</strong></h3>
+<pre><code class="language-c">static int somar(int a, int b) { return a + b; }
+printf(&quot;%d\n&quot;, somar(5,3));
+</code></pre>
+<h3 id="ponteiros"><strong>Ponteiros</strong></h3>
+<pre><code class="language-c">int x = 10, *p = &amp;x; *p = 20;        // x =&gt; 20
+int *q = &amp;x, **pp = &amp;q; **pp = 42;   // x =&gt; 42
+</code></pre>
+<hr />
+<h2 id="casos-de-erro-diagnostico-do-compilador">❌ Casos de Erro (diagnóstico do compilador)</h2>
+<blockquote>
+<p>Estes arquivos ficam em <code>tests_c/errors/</code> e <strong>devem falhar</strong> ao compilar (ou gerar UB óbvia), validando mensagens e robustez do front-end.</p>
+</blockquote>
+<ul>
+<li><code>div_zero.c</code> — divisão por zero.</li>
+<li><code>dois_pontos_ausente.c</code> — falta <code>;</code> após declaração.</li>
+<li><code>erro_de_ortografia.c</code> — <code>pritnf</code> (símbolo indefinido).</li>
+<li><code>tipo_incorreto.c</code> — soma entre <code>int</code> e string literal.</li>
+<li><code>variavel_desconhecida.c</code> — símbolo não declarado.</li>
+<li><code>mal_identacao.c</code> — compila, mas mantém intenção de estilo ruim.</li>
+</ul>
+<p>Para rodar a verificação:</p>
+<pre><code class="language-bash">./test_c_errors.sh
+</code></pre>
+<hr />
+<h2 id="como-testar-manualmente">🔧 Como Testar Manualmente</h2>
+<h3 id="metodo-1-teste-direto-de-um-arquivo"><strong>Método 1: Teste direto de um arquivo</strong></h3>
+<pre><code class="language-bash">gcc -Wall -Wextra -std=c11 tests_c/test_simple.c -o test_simple.out
+./test_simple.out
+</code></pre>
+<h3 id="metodo-2-outro-arquivo-especifico"><strong>Método 2: Outro arquivo específico</strong></h3>
+<pre><code class="language-bash">gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o test_if.out
+./test_if.out
+</code></pre>
+<h3 id="metodo-3-suite-completa-scripts"><strong>Método 3: Suíte completa (scripts)</strong></h3>
+<pre><code class="language-bash">chmod +x run_c_tests.sh test_c_errors.sh
+./run_c_tests.sh
+./test_c_errors.sh
+</code></pre>
+<hr />
+<h2 id="resultados-esperados-exemplos">📊 Resultados Esperados (exemplos)</h2>
+<h3 id="teste-bem-sucedido"><strong>Teste Bem-Sucedido</strong></h3>
+<pre><code class="language-text">z=30
+</code></pre>
+<h3 id="teste-com-condicional"><strong>Teste com Condicional</strong></h3>
+<pre><code class="language-text">Positivo
+</code></pre>
+<h3 id="teste-com-blocos-aninhados"><strong>Teste com Blocos Aninhados</strong></h3>
+<pre><code class="language-text">A
+A1
+B
+</code></pre>
+<h3 id="ponteiros_1"><strong>Ponteiros</strong></h3>
+<pre><code class="language-text">x=20
+x=42
+</code></pre>
+<h3 id="loop"><strong>Loop</strong></h3>
+<pre><code class="language-text">0
+1
+2
+</code></pre>
+<h3 id="caso-de-erro-compilacao"><strong>Caso de Erro (compilação)</strong></h3>
+<pre><code class="language-text">.../tipo_incorreto.c: In function ‘main’:
+... error: invalid operands to binary + (have ‘int’ and ‘char *’)
+</code></pre>
+<hr />
+<h2 id="solucao-de-problemas">🐛 Solução de Problemas</h2>
+<h3 id="command-not-found-ao-rodar-script"><strong>“command not found” ao rodar script</strong></h3>
+<pre><code class="language-bash">chmod +x run_c_tests.sh test_c_errors.sh
+</code></pre>
+<h3 id="compilacao-falha-por-falta-de-gccclang"><strong>Compilação falha por falta de GCC/Clang</strong></h3>
+<ul>
+<li>Instale o compilador:</li>
+<li>Debian/Ubuntu: <code>sudo apt-get install build-essential</code></li>
+<li>Fedora: <code>sudo dnf install gcc</code></li>
+<li>Arch: <code>sudo pacman -S gcc</code></li>
+</ul>
+<h3 id="erros-de-linkagem-ou-flags"><strong>Erros de linkagem ou flags</strong></h3>
+<ul>
+<li>Use um mínimo estável:</li>
+</ul>
+<pre><code class="language-bash">gcc -std=c11 -Wall -Wextra arquivo.c -o arquivo.out
+</code></pre>
+<h3 id="permissoes-no-repositorio"><strong>Permissões no repositório</strong></h3>
+<pre><code class="language-bash">git config --global core.filemode false
+</code></pre>
+<hr />
+<h2 id="expandindo-os-testes">📈 Expandindo os Testes</h2>
+<h3 id="criar-um-novo-teste"><strong>Criar um novo teste</strong></h3>
+<pre><code class="language-bash">cat &gt; tests_c/test_meu_exemplo.c &lt;&lt;'EOF'
+#include &lt;stdio.h&gt;
+int main(void){
+    printf(&quot;meu-exemplo\n&quot;);
+    return 0;
+}
+EOF
+
+gcc -Wall -Wextra -std=c11 tests_c/test_meu_exemplo.c -o tests_c/test_meu_exemplo.out
+./tests_c/test_meu_exemplo.out
+</code></pre>
+<h3 id="adicionar-ao-script"><strong>Adicionar ao script</strong></h3>
+<p>No <code>run_c_tests.sh</code>, inclua a compilação (o script já compila todos os <code>.c</code> do diretório raiz <code>tests_c/</code>, então basta salvar o arquivo).</p>
+<hr />
+<h2 id="checklist-de-testes">🎯 Checklist de Testes</h2>
+<ul>
+<li>[ ] Atribuições simples funcionam  </li>
+<li>[ ] Aritmética e precedência funcionam  </li>
+<li>[ ] Comparações e lógicos funcionam  </li>
+<li>[ ] <code>printf</code> imprime o esperado  </li>
+<li>[ ] <code>if / else if / else</code> funcionam  </li>
+<li>[ ] <code>while</code> funciona  </li>
+<li>[ ] Funções e retorno funcionam  </li>
+<li>[ ] Ponteiros e ponteiro de ponteiro funcionam  </li>
+<li>[ ] Casos de erro geram diagnósticos de compilação  </li>
+</ul>
+<hr />
+<h2 id="suporte">📞 Suporte</h2>
+<ol>
+<li>Confirme que o compilador está instalado (<code>gcc --version</code>).  </li>
+<li>Compile um teste simples antes da suíte.  </li>
+<li>Use os scripts <code>run_c_tests.sh</code> e <code>test_c_errors.sh</code>.  </li>
+<li>Verifique o README/Docs do projeto para flags/ambiente.</li>
+</ol>
+<p><strong>Versão:</strong> Suíte C<br />
+<strong>Data:</strong> <em>15/10/2025</em></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.top"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

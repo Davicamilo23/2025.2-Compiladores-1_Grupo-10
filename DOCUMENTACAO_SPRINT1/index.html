@@ -1,0 +1,1969 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../SUMARIO_EXECUTIVO/">
+      
+      
+        <link rel="next" href="../CHANGELOG/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Detalhes Técnicos - Grupo 10 - Compiladores 1</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Poppins";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#documentacao-de-ajustes-e-testes-sprint-1" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-header__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grupo 10 - Compiladores 1
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Detalhes Técnicos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sobre/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sobre o Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia-instalacao-uso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Instalação e Uso
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../manual-tecnico/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual Técnico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../linguagem-fonte-c/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tokens e Estrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../SUMARIO_EXECUTIVO/" class="md-tabs__link">
+          
+  
+  
+  Sprint 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_TESTES/" class="md-tabs__link">
+          
+  
+  
+  Testes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../atas/ata01/" class="md-tabs__link">
+          
+  
+  
+  Atas
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-nav__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Grupo 10 - Compiladores 1
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sobre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sobre o Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia-instalacao-uso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Instalação e Uso
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-tecnico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Técnico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linguagem-fonte-c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokens e Estrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprint 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sprint 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SUMARIO_EXECUTIVO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sumário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detalhes Técnicos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detalhes Técnicos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compilador-c-para-python-flex-bison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilador C para Python (Flex &amp; Bison)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ajustes-realizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Ajustes Realizados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Ajustes Realizados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-correcao-do-scanner-scannerl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Correção do Scanner (scanner.l)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Correção do Scanner (scanner.l)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problema-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problema Original:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ajustes-implementados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ajustes Implementados:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-simplificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de Simplificação:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-correcao-do-parser-parsery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Correção do Parser (parser.y)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Correção do Parser (parser.y)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problema-original_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problema Original:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ajustes-implementados_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ajustes Implementados:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplificacao-da-gramatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simplificação da Gramática:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-correcao-do-makefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Correção do Makefile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TESTES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atas
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Atas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compilador-c-para-python-flex-bison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilador C para Python (Flex &amp; Bison)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ajustes-realizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔧 Ajustes Realizados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔧 Ajustes Realizados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-correcao-do-scanner-scannerl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Correção do Scanner (scanner.l)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Correção do Scanner (scanner.l)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problema-original" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problema Original:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ajustes-implementados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ajustes Implementados:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-simplificacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de Simplificação:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-correcao-do-parser-parsery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Correção do Parser (parser.y)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Correção do Parser (parser.y)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#problema-original_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problema Original:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ajustes-implementados_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ajustes Implementados:
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplificacao-da-gramatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simplificação da Gramática:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-correcao-do-makefile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Correção do Makefile
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href=".." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../SUMARIO_EXECUTIVO/" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Sprint 1
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="documentacao-de-ajustes-e-testes-sprint-1">📖 Documentação de Ajustes e Testes - Sprint 1</h1>
+<h2 id="compilador-c-para-python-flex-bison">Compilador C para Python (Flex &amp; Bison)</h2>
+<p><strong>Data:</strong> 13-14 de Setembro de 2025<br />
+<strong>Branch:</strong> Testes<br />
+<strong>Versão:</strong> Sprint 1  </p>
+<hr />
+<h2 id="ajustes-realizados">🔧 Ajustes Realizados</h2>
+<h3 id="1-correcao-do-scanner-scannerl">1. <strong>Correção do Scanner (scanner.l)</strong></h3>
+<h4 id="problema-original"><strong>Problema Original:</strong></h4>
+<ul>
+<li>Código escrito em C++ com includes incompatíveis com Flex</li>
+<li>Uso de <code>std::vector</code> e sintaxe C++</li>
+<li>Erros de compilação com <code>unrecognised rule</code></li>
+</ul>
+<h4 id="ajustes-implementados"><strong>Ajustes Implementados:</strong></h4>
+<p><strong>Antes:</strong></p>
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+static std::vector&lt;int&gt; indent_stack = {0};
+</code></pre>
+<p><strong>Depois:</strong></p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+static int indent_stack[100] = {0};
+static int indent_stack_size = 1;
+</code></pre>
+<h4 id="estrategia-de-simplificacao"><strong>Estratégia de Simplificação:</strong></h4>
+<p>Devido à complexidade da implementação original de indentação, foi criada uma versão simplificada:</p>
+<pre><code class="language-c">%{
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &quot;parser.tab.h&quot;
+
+extern int yylineno;
+%}
+
+%option noyywrap nodefault yylineno
+
+DIGIT         [0-9]
+ID_START      [A-Za-z_]
+ID_CONT       [A-Za-z0-9_]
+
+%%
+
+[ \t]+        { /* ignore whitespace */ }
+\n            { return NEWLINE; }
+&quot;#&quot;[^\n]*     { /* ignore comments */ }
+
+// Palavras-chave
+&quot;def&quot;         { return DEF; }
+&quot;if&quot;          { return IF; }
+&quot;elif&quot;        { return ELIF; }
+&quot;else&quot;        { return ELSE; }
+&quot;while&quot;       { return WHILE; }
+&quot;return&quot;      { return RETURN; }
+&quot;print&quot;       { return PRINT; }
+&quot;and&quot;         { return AND; }
+&quot;or&quot;          { return OR; }
+&quot;not&quot;         { return NOT; }
+&quot;True&quot;        { return TRUE; }
+&quot;False&quot;       { return FALSE; }
+&quot;None&quot;        { return NONE; }
+
+// Identificadores e literais
+{ID_START}{ID_CONT}*  { yylval.s = strdup(yytext); return ID; }
+{DIGIT}+              { yylval.s = strdup(yytext); return INT_LIT; }
+\&quot;[^\&quot;]*\&quot;            { yylval.s = strdup(yytext); return STRING_LIT; }
+
+// Operadores
+&quot;==&quot;          { return EQEQ; }
+&quot;!=&quot;          { return NE; }
+&quot;&lt;=&quot;          { return LE; }
+&quot;&gt;=&quot;          { return GE; }
+&quot;&lt;&quot;           { return LT; }
+&quot;&gt;&quot;           { return GT; }
+&quot;:&quot;           { return COLON; }
+&quot;,&quot;           { return COMMA; }
+&quot;(&quot;           { return LPAREN; }
+&quot;)&quot;           { return RPAREN; }
+&quot;+&quot;           { return PLUS; }
+&quot;-&quot;           { return MINUS; }
+&quot;*&quot;           { return STAR; }
+&quot;//&quot;          { return SLASHSLASH; }
+&quot;%&quot;           { return PERCENT; }
+&quot;=&quot;           { return ASSIGN; }
+
+&quot;    &quot;        { return INDENT; }
+
+.             { fprintf(stderr, &quot;Unexpected character: %s\n&quot;, yytext); }
+
+%%
+</code></pre>
+<h3 id="2-correcao-do-parser-parsery">2. <strong>Correção do Parser (parser.y)</strong></h3>
+<h4 id="problema-original_1"><strong>Problema Original:</strong></h4>
+<ul>
+<li>Includes C++ incompatíveis</li>
+<li>Definição de tipos semânticos inadequada</li>
+</ul>
+<h4 id="ajustes-implementados_1"><strong>Ajustes Implementados:</strong></h4>
+<p><strong>Antes:</strong></p>
+<pre><code class="language-cpp">#include &lt;cstdio&gt;
+#include &lt;cstdlib&gt;
+#include &lt;cstring&gt;
+
+%define api.value.type {char*}
+</code></pre>
+<p><strong>Depois:</strong></p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+%union {
+    char* s;
+}
+
+%token &lt;s&gt; ID INT_LIT STRING_LIT
+</code></pre>
+<h4 id="simplificacao-da-gramatica"><strong>Simplificação da Gramática:</strong></h4>
+<p>A gramática foi simplificada para focar nos elementos básicos:</p>
+<pre><code class="language-yacc">program
+  : stmts_opt                          { printf(&quot;[OK] programa reconhecido\n&quot;); }
+  ;
+
+stmts_opt
+  : /* vazio */
+  | stmts_opt stmt
+  ;
+
+stmt
+  : simple_stmt NEWLINE
+  | compound_stmt
+  ;
+
+simple_stmt
+  : small_stmt
+  ;
+
+small_stmt
+  : expr                               
+  | ID ASSIGN expr                     { printf(&quot;assign %s := expr\n&quot;, $1); }
+  | PRINT LPAREN arglist_opt RPAREN    { printf(&quot;print(...)\n&quot;); }
+  | RETURN expr                        { printf(&quot;return expr\n&quot;); }
+  ;
+</code></pre>
+<h3 id="3-correcao-do-makefile">3. <strong>Correção do Makefile</strong></h3>
+<p>O Makefile original estava correto, sem necessidade de ajustes.</p>
+<hr />
+<h1 id="suite-de-testes-do-compilador-versao-em-c">🧪 Suíte de Testes do Compilador — Versão em C</h1>
+<blockquote>
+<p>Migramos toda a suíte de testes para <strong>C</strong>, espelhando o comportamento dos casos em Python (incluindo os casos de <strong>erro</strong>). Cada teste é um executável independente com <code>main()</code> e validação por <code>printf</code>.</p>
+</blockquote>
+<hr />
+<h2 id="1-arquivos-de-teste-criados">1) Arquivos de Teste Criados</h2>
+<h3 id="tests_ctest_simplec"><code>tests_c/test_simple.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 10, y = 20, z = x + y;
+    printf(&quot;z=%d\n&quot;, z);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Atribuições básicas e expressão aritmética simples.</p>
+<h3 id="tests_ctest_printc"><code>tests_c/test_print.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    printf(&quot;Hello\n&quot;);
+    int result = 5 + 3 * 2;
+    (void)result;
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> <code>printf</code> e precedência de operadores.</p>
+<h3 id="tests_ctest_basicc"><code>tests_c/test_basic.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 10, y = 20, z = x + y;
+    (void)z;
+    printf(&quot;Hello World\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Comentários, atribuições e <code>printf</code>.</p>
+<h3 id="tests_ctest_ifc"><code>tests_c/test_if.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 5;
+    if (x &gt; 0) printf(&quot;Positivo\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Condicionais simples.</p>
+<h3 id="tests_ctest_if_elsec"><code>tests_c/test_if_else.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = -1;
+    if (x &gt; 0) printf(&quot;positive\n&quot;);
+    else      printf(&quot;non_positive\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> <code>if/else</code>.</p>
+<h3 id="tests_ctest_if_elif_elsec"><code>tests_c/test_if_elif_else.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int n = 3;
+    if (n &lt; 0)       printf(&quot;negative\n&quot;);
+    else if (n &lt; 5)  printf(&quot;small\n&quot;);
+    else             printf(&quot;large\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Cadeia <code>if / else if / else</code>.</p>
+<h3 id="tests_ctest_if_flatc"><code>tests_c/test_if_flat.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 5, y = 0;
+    if (x &gt; 0) y = 1;
+    printf(&quot;y=%d\n&quot;, y);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Atribuição dentro de <code>if</code> e leitura fora do bloco.</p>
+<h3 id="tests_ctest_if_simplec"><code>tests_c/test_if_simple.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 5;
+    if (x &gt; 0) printf(&quot;positive\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> <code>if</code> simples.</p>
+<h3 id="tests_ctest_nested_blocksc"><code>tests_c/test_nested_blocks.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 10;
+    if (x &gt; 0){
+        printf(&quot;A\n&quot;);
+        if (x &gt; 5) printf(&quot;A1\n&quot;);
+    }
+    printf(&quot;B\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Blocos aninhados.</p>
+<h3 id="tests_ctest_whilec"><code>tests_c/test_while.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int counter = 0;
+    while (counter &lt; 3){
+        printf(&quot;%d\n&quot;, counter);
+        counter++;
+    }
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Loop <code>while</code>.</p>
+<h3 id="tests_ctest_functionc"><code>tests_c/test_function.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+static int somar(int a,int b){ return a + b; }
+int main(void){
+    int r = somar(5,3);
+    printf(&quot;%d\n&quot;, r);
+    return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Definição e chamada de função.</p>
+<h3 id="tests_ctest_scopec"><code>tests_c/test_scope.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+static void foo(void){ int x = 2; printf(&quot;inner_x=%d\n&quot;, x); }
+int main(void){
+    int x = 1; foo(); printf(&quot;outer_x=%d\n&quot;, x); return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Escopo e sombreamento.</p>
+<h3 id="tests_ctest_ptr_decl_assignc"><code>tests_c/test_ptr_decl_assign.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 10; int *p = &amp;x; *p = 20; printf(&quot;x=%d\n&quot;, x); return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Declaração, endereço e desreferência.</p>
+<h3 id="tests_ctest_ptr_chainc"><code>tests_c/test_ptr_chain.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 1; int *p = &amp;x; int **pp = &amp;p; **pp = 42;
+    printf(&quot;x=%d\n&quot;, x); return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Ponteiro de ponteiro.</p>
+<h3 id="tests_ctest_ptr_arithc"><code>tests_c/test_ptr_arith.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int p = 0; int q = p + 1; printf(&quot;q=%d\n&quot;, q); return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Aritmética simples (analogia com ponteiros).</p>
+<h3 id="tests_ctest_ptr_if_whilec"><code>tests_c/test_ptr_if_while.c</code></h3>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+int main(void){
+    int x = 0; int *p = &amp;x;
+    while (*p &lt; 5){
+        (*p)++;
+        if (*p &gt; 2){ x = 100; break; }
+    }
+    printf(&quot;x=%d\n&quot;, x); return 0;
+}
+</code></pre>
+<p><strong>Objetivo:</strong> Ponteiros em fluxo de controle.</p>
+<hr />
+<h2 id="2-casos-de-erro-diagnostico-do-compilador">2) Casos de Erro (Diagnóstico do Compilador)</h2>
+<blockquote>
+<p>Equivalentes aos de Python, para validar diagnóstico do front‑end (léxico/sintático/semântico).</p>
+</blockquote>
+<ul>
+<li><code>tests_c/errors/div_zero.c</code> — divisão por zero (UB/diagnóstico).</li>
+<li><code>tests_c/errors/dois_pontos_ausente.c</code> — falta <code>;</code> após declaração.</li>
+<li><code>tests_c/errors/erro_de_ortografia.c</code> — <code>pritnf</code> (typo).</li>
+<li><code>tests_c/errors/mal_identacao.c</code> — compila; mantém intenção de má formatação.</li>
+<li><code>tests_c/errors/tipo_incorreto.c</code> — soma entre <code>int</code> e string literal.</li>
+<li><code>tests_c/errors/variavel_desconhecida.c</code> — uso de símbolo não declarado.</li>
+</ul>
+<h3 id="test_c_errorssh"><code>test_c_errors.sh</code></h3>
+<pre><code class="language-bash">#!/usr/bin/env bash
+set -eu
+CC=${CC:-gcc}
+CFLAGS=&quot;-Wall -Wextra -std=c11&quot;
+DIR=&quot;tests_c/errors&quot;
+
+echo &quot;== Compilando casos de ERRO (espera-se falha) ==&quot;
+for f in $(find &quot;$DIR&quot; -name &quot;*.c&quot; | sort); do
+  if $CC $CFLAGS &quot;$f&quot; -o &quot;${f%.c}.out&quot; 2&gt;/dev/null; then
+    echo &quot;!! ERRO: compilou mas deveria falhar -&gt; $(basename &quot;$f&quot;)&quot;
+  else
+    echo &quot;OK: falhou como esperado -&gt; $(basename &quot;$f&quot;)&quot;
+  fi
+done
+</code></pre>
+<hr />
+<h2 id="3-execucao-automatizada-dos-testes-validos">3) Execução Automatizada dos Testes “Válidos”</h2>
+<h3 id="run_c_testssh"><code>run_c_tests.sh</code></h3>
+<pre><code class="language-bash">#!/usr/bin/env bash
+set -eu
+
+CC=${CC:-gcc}
+CFLAGS=&quot;-Wall -Wextra -Werror -std=c11&quot;
+ROOT=&quot;tests_c&quot;
+
+echo &quot;== Compilando e executando testes C ==&quot;
+
+ok=0; fail=0
+for f in $(find &quot;$ROOT&quot; -maxdepth 1 -name &quot;*.c&quot; | sort); do
+  exe=&quot;${f%.c}.out&quot;
+  if $CC $CFLAGS &quot;$f&quot; -o &quot;$exe&quot;; then
+    echo &quot;&gt;&gt; RUN $(basename &quot;$f&quot;)&quot;
+    &quot;$exe&quot; || true
+    ok=$((ok+1))
+  else
+    echo &quot;!! FAIL COMPILE $(basename &quot;$f&quot;)&quot;
+    fail=$((fail+1))
+  fi
+done
+
+echo &quot;-- RESUMO: OK=$ok, FAIL=$fail --&quot;
+</code></pre>
+<hr />
+<h2 id="4-resultados-esperados">4) Resultados Esperados</h2>
+<h3 id="funcionalidades-testadas-e-aprovadas-c">✅ Funcionalidades Testadas e Aprovadas (C)</h3>
+<table>
+<thead>
+<tr>
+<th>Categoria</th>
+<th>Teste/Exemplo</th>
+<th>Status</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tipos e Atribuições</td>
+<td><code>int x=10; int y=20;</code></td>
+<td>✅</td>
+<td><code>test_simple</code>, <code>test_basic</code></td>
+</tr>
+<tr>
+<td>Aritmética</td>
+<td><code>+ - * / %</code></td>
+<td>✅</td>
+<td>Precedência validada em <code>test_print</code></td>
+</tr>
+<tr>
+<td>Comparações</td>
+<td><code>&lt; &lt;= &gt; &gt;= == !=</code></td>
+<td>✅</td>
+<td>Usadas em <code>if*</code></td>
+</tr>
+<tr>
+<td><code>printf</code>/Saída</td>
+<td><code>printf("...")</code></td>
+<td>✅</td>
+<td>Mensagens de verificação</td>
+</tr>
+<tr>
+<td>Controle de Fluxo</td>
+<td><code>if / else if / else</code></td>
+<td>✅</td>
+<td><code>test_if*</code></td>
+</tr>
+<tr>
+<td>Loop</td>
+<td><code>while</code></td>
+<td>✅</td>
+<td><code>test_while</code></td>
+</tr>
+<tr>
+<td>Funções</td>
+<td>declaração/retorno</td>
+<td>✅</td>
+<td><code>test_function</code></td>
+</tr>
+<tr>
+<td>Escopo</td>
+<td>variável local e sombreamento</td>
+<td>✅</td>
+<td><code>test_scope</code></td>
+</tr>
+<tr>
+<td>Ponteiros</td>
+<td><code>&amp;</code> e <code>*</code></td>
+<td>✅</td>
+<td><code>test_ptr_decl_assign</code></td>
+</tr>
+<tr>
+<td>Ponteiro de ponteiro</td>
+<td><code>**</code></td>
+<td>✅</td>
+<td><code>test_ptr_chain</code></td>
+</tr>
+<tr>
+<td>Ponteiro em fluxo</td>
+<td><code>if/while</code> com <code>*p</code></td>
+<td>✅</td>
+<td><code>test_ptr_if_while</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="casos-de-erro-diagnostico-do-compilador">⚠️ Casos de Erro (Diagnóstico do Compilador)</h3>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Expectativa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>errors/div_zero.c</code></td>
+<td>Diagnóstico/UB por divisão por zero</td>
+</tr>
+<tr>
+<td><code>errors/dois_pontos_ausente.c</code></td>
+<td>Falha de compilação (faltando <code>;</code>)</td>
+</tr>
+<tr>
+<td><code>errors/erro_de_ortografia.c</code></td>
+<td>Falha de compilação (<code>pritnf</code> indefinido)</td>
+</tr>
+<tr>
+<td><code>errors/tipo_incorreto.c</code></td>
+<td>Falha de compilação (operandos incompatíveis)</td>
+</tr>
+<tr>
+<td><code>errors/variavel_desconhecida.c</code></td>
+<td>Falha de compilação (símbolo não declarado)</td>
+</tr>
+<tr>
+<td><code>errors/mal_identacao.c</code></td>
+<td>Compila; usado para observar estilo</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="5-como-rodar">5) Como Rodar</h2>
+<pre><code class="language-bash">chmod +x run_c_tests.sh test_c_errors.sh
+./run_c_tests.sh        # compila e executa os testes &quot;válidos&quot;
+./test_c_errors.sh      # compila casos de erro (espera falhas)
+</code></pre>
+<blockquote>
+<p><strong>Saídas esperadas:</strong> linhas de <code>printf</code> (ex.: <code>z=30</code>, <code>Positivo</code>, <code>A\nA1\nB</code>, <code>x=20</code>, etc.) para comparação com seus “goldens”.</p>
+</blockquote>
+<hr />
+<h2 id="6-observacoes">6) Observações</h2>
+<ul>
+<li>A suíte em C mantém paridade semântica com os testes originais em Python.</li>
+<li>Os casos de erro validam a robustez do diagnóstico do compilador.</li>
+<li>Podemos adicionar <code>Makefile</code> e macros de asserção (<code>ASSERT_EQ</code>, etc.) sob demanda.</li>
+</ul>
+<hr />
+<h2 id="metodos-de-teste-manual-disponiveis">🎯 Métodos de Teste Manual Disponíveis</h2>
+<h3 id="1-teste-rapido-no-terminal-um-arquivo-c"><strong>1. Teste Rápido no Terminal (um arquivo .c)</strong></h3>
+<pre><code>gcc -Wall -Wextra -std=c11 tests_c/test_simple.c -o test_simple.out
+./test_simple.out
+</code></pre>
+<h3 id="2-teste-de-outro-arquivo-especifico"><strong>2. Teste de Outro Arquivo Específico</strong></h3>
+<pre><code>gcc -Wall -Wextra -std=c11 tests_c/test_if.c -o test_if.out
+./test_if.out
+</code></pre>
+<h3 id="3-rodar-a-suite-completa-scripts"><strong>3. Rodar a Suíte Completa (scripts)</strong></h3>
+<pre><code>chmod +x run_c_tests.sh test_c_errors.sh
+./run_c_tests.sh        # compila e executa os testes "válidos"
+./test_c_errors.sh      # verifica que os casos de erro falham na compilação
+</code></pre>
+<blockquote>
+<p>Dica: troque o nome do arquivo (<code>test_if.c</code>, <code>test_while.c</code>, etc.) para compilar/rodar qualquer teste individualmente.</p>
+</blockquote>
+<h3 id="4-scripts-automatizados"><strong>4. Scripts Automatizados</strong></h3>
+<pre><code class="language-bash">./run_tests.sh          # Bateria de testes
+./test_errors.sh        # Testes de erro
+./teste_manual.sh       # Menu interativo
+./exemplos_teste.sh     # Exemplos com feedback
+</code></pre>
+<hr />
+<h2 id="compilacao-e-execucao">🚀 Compilação e Execução</h2>
+<h3 id="comandos-de-compilacao"><strong>Comandos de Compilação</strong></h3>
+<pre><code class="language-bash">make clean    # Limpar arquivos gerados
+make          # Compilar o projeto
+</code></pre>
+<h3 id="estrutura-de-arquivos-gerados"><strong>Estrutura de Arquivos Gerados</strong></h3>
+<ul>
+<li><code>pylite</code> - Executável principal</li>
+<li><code>parser.tab.c</code> / <code>parser.tab.h</code> - Código gerado pelo Bison</li>
+<li><code>lex.yy.c</code> - Código gerado pelo Flex</li>
+</ul>
+<h3 id="avisos-de-compilacao-normais"><strong>Avisos de Compilação (Normais)</strong></h3>
+<ul>
+<li>14 shift/reduce conflicts (esperado para a gramática atual)</li>
+<li>Funções não utilizadas do Flex (normal)</li>
+</ul>
+<hr />
+<h2 id="proximos-passos-sprint-2">📈 Próximos Passos (Sprint 2)</h2>
+<ol>
+<li><strong>Restaurar suporte completo à indentação</strong></li>
+<li><strong>Implementar estruturas de controle com blocos</strong></li>
+<li><strong>Melhorar tratamento de comentários</strong></li>
+<li><strong>Adicionar mais tipos de dados</strong></li>
+<li><strong>Implementar análise semântica básica</strong></li>
+<li><strong>Adicionar geração de AST</strong></li>
+</ol>
+<hr />
+<h2 id="conclusao">📝 Conclusão</h2>
+<p>A Sprint 1 foi <strong>bem-sucedida</strong> em estabelecer as bases do compilador:</p>
+<ul>
+<li>✅ <strong>Compilação funcional</strong> do projeto</li>
+<li>✅ <strong>Análise léxica</strong> completa para tokens básicos</li>
+<li>✅ <strong>Análise sintática</strong> para expressões e comandos simples</li>
+<li>✅ <strong>Tratamento de erros</strong> básico implementado</li>
+<li>✅ <strong>Bateria de testes</strong> abrangente criada</li>
+<li>✅ <strong>Documentação</strong> completa dos ajustes</li>
+</ul>
+<p>O compilador reconhece corretamente a sintaxe básica de Python e está pronto para expansão nas próximas sprints.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.top"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

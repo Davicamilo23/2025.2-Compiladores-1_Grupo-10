@@ -1,0 +1,2881 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../manual-tecnico/">
+      
+      
+        <link rel="next" href="../SUMARIO_EXECUTIVO/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Tokens e Estrutura - Grupo 10 - Compiladores 1</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Poppins";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#especificacao-da-linguagem-fonte-c" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-header__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grupo 10 - Compiladores 1
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Tokens e Estrutura
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sobre/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sobre o Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia-instalacao-uso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Instalação e Uso
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../manual-tecnico/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual Técnico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tokens e Estrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../SUMARIO_EXECUTIVO/" class="md-tabs__link">
+          
+  
+  
+  Sprint 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_TESTES/" class="md-tabs__link">
+          
+  
+  
+  Testes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../atas/ata01/" class="md-tabs__link">
+          
+  
+  
+  Atas
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-nav__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Grupo 10 - Compiladores 1
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sobre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sobre o Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia-instalacao-uso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Instalação e Uso
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manual-tecnico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Técnico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokens e Estrutura
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokens e Estrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compilador-c-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilador C → Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#especificacao-de-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔤 Especificação de Tokens
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔤 Especificação de Tokens">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#palavras-chave-keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palavras-Chave (Keywords)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operadores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operadores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aritmeticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aritméticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relacionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lógicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atribuicao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atribuição
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delimitadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delimitadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#literais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Literais
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Literais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#numeros-inteiros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Números Inteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numeros-de-ponto-flutuante" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Números de Ponto Flutuante
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caracteres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caracteres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estruturas-sintaticas-suportadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ Estruturas Sintáticas Suportadas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Estruturas Sintáticas Suportadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-declaracoes-de-variaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Declarações de Variáveis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Declarações de Variáveis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#declaracao-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declaração Simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracao-com-inicializacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declaração com Inicialização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-expressoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Expressões
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Expressões">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aritmeticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aritméticas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacionais-e-logicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relacionais e Lógicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-estruturas-de-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Estruturas de Controle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Estruturas de Controle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ifelse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If/Else
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        While
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Funções
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Funções">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicao-de-funcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de Função
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcao-main" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Função Main
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-entrada-e-saida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entrada e Saída
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Entrada e Saída">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#printf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Printf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scanf-simplificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scanf (Simplificado)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gramatica-formal-bnf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Gramática Formal (BNF)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Gramática Formal (BNF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#programa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Programa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracoes-de-variaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarações de Variáveis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracoes-de-funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarações de Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comandos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mapeamento-de-tipos-c-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Mapeamento de Tipos C → Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Tratamento de Erros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Tratamento de Erros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erros-lexicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Léxicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-sintaticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Sintáticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-semanticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Semânticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-do-subconjunto-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Limitações do Subconjunto C
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Limitações do Subconjunto C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nao-suportado-versao-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Não Suportado (Versão Inicial)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcionalidades-futuras-sprints-posteriores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funcionalidades Futuras (Sprints Posteriores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-teste-representativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Casos de Teste Representativos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Casos de Teste Representativos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teste-1-programa-basico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 1: Programa Básico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-2-funcao-com-parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 2: Função com Parâmetros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-3-estruturas-de-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 3: Estruturas de Controle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-4-arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 4: Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprint 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sprint 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SUMARIO_EXECUTIVO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sumário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCUMENTACAO_SPRINT1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detalhes Técnicos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TESTES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atas
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Atas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#compilador-c-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Compilador C → Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#especificacao-de-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🔤 Especificação de Tokens
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🔤 Especificação de Tokens">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#palavras-chave-keywords" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Palavras-Chave (Keywords)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#operadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operadores
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operadores">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aritmeticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aritméticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relacionais
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lógicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atribuicao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atribuição
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delimitadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Delimitadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#literais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Literais
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Literais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#numeros-inteiros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Números Inteiros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#numeros-de-ponto-flutuante" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Números de Ponto Flutuante
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#caracteres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Caracteres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificadores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificadores
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estruturas-sintaticas-suportadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🏗️ Estruturas Sintáticas Suportadas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🏗️ Estruturas Sintáticas Suportadas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-declaracoes-de-variaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Declarações de Variáveis
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Declarações de Variáveis">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#declaracao-simples" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declaração Simples
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracao-com-inicializacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declaração com Inicialização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-expressoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Expressões
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Expressões">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aritmeticas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aritméticas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relacionais-e-logicas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relacionais e Lógicas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-estruturas-de-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Estruturas de Controle
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Estruturas de Controle">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ifelse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        If/Else
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#while" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        While
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Funções
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Funções">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#definicao-de-funcao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Definição de Função
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcao-main" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Função Main
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-entrada-e-saida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Entrada e Saída
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Entrada e Saída">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#printf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Printf
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scanf-simplificado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scanf (Simplificado)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gramatica-formal-bnf" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📋 Gramática Formal (BNF)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📋 Gramática Formal (BNF)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#programa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Programa
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracoes-de-variaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarações de Variáveis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#declaracoes-de-funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Declarações de Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comandos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expressoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expressões
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mapeamento-de-tipos-c-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🎯 Mapeamento de Tipos C → Python
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🚨 Tratamento de Erros
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🚨 Tratamento de Erros">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#erros-lexicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Léxicos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-sintaticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Sintáticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros-semanticos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros Semânticos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-do-subconjunto-c" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        📊 Limitações do Subconjunto C
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="📊 Limitações do Subconjunto C">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nao-suportado-versao-inicial" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Não Suportado (Versão Inicial)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#funcionalidades-futuras-sprints-posteriores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funcionalidades Futuras (Sprints Posteriores)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#casos-de-teste-representativos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        🧪 Casos de Teste Representativos
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="🧪 Casos de Teste Representativos">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#teste-1-programa-basico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 1: Programa Básico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-2-funcao-com-parametros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 2: Função com Parâmetros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-3-estruturas-de-controle" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 3: Estruturas de Controle
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#teste-4-arrays" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Teste 4: Arrays
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="especificacao-da-linguagem-fonte-c">📖 Especificação da Linguagem-Fonte C</h1>
+<h2 id="compilador-c-python">Compilador C → Python</h2>
+<p>Este documento define o subconjunto da linguagem C que será a linguagem fonte do nosso compilador, incluindo tokens, estruturas sintáticas, semântica e exemplos de tradução para Python.</p>
+<hr />
+<h2 id="especificacao-de-tokens">🔤 Especificação de Tokens</h2>
+<h3 id="palavras-chave-keywords">Palavras-Chave (Keywords)</h3>
+<pre><code class="language-c">// Tipos de dados
+int float char void
+
+// Estruturas de controle
+if else while for do switch case default break continue
+
+// Funções e escopo
+return
+
+// Inclusões (limitado)
+#include
+
+// Entrada/Saída
+printf scanf
+
+// Valores especiais
+NULL
+</code></pre>
+<h3 id="operadores">Operadores</h3>
+<h4 id="aritmeticos">Aritméticos</h4>
+<pre><code class="language-c">+    // Adição
+-    // Subtração
+*    // Multiplicação
+/    // Divisão
+%    // Módulo
+++   // Incremento
+--   // Decremento
+</code></pre>
+<h4 id="relacionais">Relacionais</h4>
+<pre><code class="language-c">==   // Igual
+!=   // Diferente
+&lt;    // Menor
+&lt;=   // Menor ou igual
+&gt;    // Maior
+&gt;=   // Maior ou igual
+</code></pre>
+<h4 id="logicos">Lógicos</h4>
+<pre><code class="language-c">&amp;&amp;   // E lógico
+||   // OU lógico
+!    // NÃO lógico
+</code></pre>
+<h4 id="atribuicao">Atribuição</h4>
+<pre><code class="language-c">=    // Atribuição simples
++=   // Atribuição com adição
+-=   // Atribuição com subtração
+*=   // Atribuição com multiplicação
+/=   // Atribuição com divisão
+</code></pre>
+<h3 id="delimitadores">Delimitadores</h3>
+<pre><code class="language-c">{    }    // Chaves (blocos)
+(    )    // Parênteses (expressões, funções)
+[    ]    // Colchetes (arrays)
+;         // Ponto e vírgula (fim de statement)
+,         // Vírgula (separador)
+</code></pre>
+<h3 id="literais">Literais</h3>
+<h4 id="numeros-inteiros">Números Inteiros</h4>
+<pre><code class="language-c">42       // Decimal
+0x2A     // Hexadecimal
+052      // Octal
+</code></pre>
+<h4 id="numeros-de-ponto-flutuante">Números de Ponto Flutuante</h4>
+<pre><code class="language-c">3.14     // Float simples
+2.5f     // Float com sufixo
+1.23e-4  // Notação científica
+</code></pre>
+<h4 id="caracteres">Caracteres</h4>
+<pre><code class="language-c">'a'      // Caractere simples
+'\n'     // Caractere de escape
+'\0'     // Caractere nulo
+</code></pre>
+<h4 id="strings">Strings</h4>
+<pre><code class="language-c">&quot;Hello&quot;          // String simples
+&quot;Hello\nWorld&quot;   // String com escape
+&quot;&quot;               // String vazia
+</code></pre>
+<h3 id="identificadores">Identificadores</h3>
+<pre><code class="language-c">// Formato: [a-zA-Z_][a-zA-Z0-9_]*
+variavel
+_contador
+MAX_SIZE
+funcao1
+array_dados
+</code></pre>
+<hr />
+<h2 id="estruturas-sintaticas-suportadas">🏗️ Estruturas Sintáticas Suportadas</h2>
+<h3 id="1-declaracoes-de-variaveis">1. Declarações de Variáveis</h3>
+<h4 id="declaracao-simples">Declaração Simples</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">int x;
+float y;
+char c;
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">x = 0        # int inicializado com 0
+y = 0.0      # float inicializado com 0.0
+c = '\0'     # char inicializado com char nulo
+</code></pre>
+<h4 id="declaracao-com-inicializacao">Declaração com Inicialização</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">int x = 10;
+float pi = 3.14;
+char letra = 'A';
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">x = 10
+pi = 3.14
+letra = 'A'
+</code></pre>
+<h4 id="arrays">Arrays</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">int numeros[5];
+int valores[3] = {1, 2, 3};
+char nome[10];
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">numeros = [0] * 5
+valores = [1, 2, 3]
+nome = ['\0'] * 10
+</code></pre>
+<h3 id="2-expressoes">2. Expressões</h3>
+<h4 id="aritmeticas">Aritméticas</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">resultado = a + b * c;
+x = (y + z) / 2;
+contador++;
+valor *= 3;
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">resultado = a + b * c
+x = (y + z) // 2      # Divisão inteira quando apropriado
+contador += 1
+valor *= 3
+</code></pre>
+<h4 id="relacionais-e-logicas">Relacionais e Lógicas</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">if (x &gt; 0 &amp;&amp; y &lt; 10) {
+    // código
+}
+
+bool resultado = (a == b) || (c != d);
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">if x &gt; 0 and y &lt; 10:
+    # código
+    pass
+
+resultado = (a == b) or (c != d)
+</code></pre>
+<h3 id="3-estruturas-de-controle">3. Estruturas de Controle</h3>
+<h4 id="ifelse">If/Else</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">if (condicao) {
+    printf(&quot;Verdadeiro\n&quot;);
+} else if (outra_condicao) {
+    printf(&quot;Outra\n&quot;);
+} else {
+    printf(&quot;Falso\n&quot;);
+}
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">if condicao:
+    print(&quot;Verdadeiro&quot;)
+elif outra_condicao:
+    print(&quot;Outra&quot;)
+else:
+    print(&quot;Falso&quot;)
+</code></pre>
+<h4 id="while">While</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">while (i &lt; 10) {
+    printf(&quot;%d\n&quot;, i);
+    i++;
+}
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">while i &lt; 10:
+    print(i)
+    i += 1
+</code></pre>
+<h4 id="for">For</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">for (int i = 0; i &lt; 10; i++) {
+    printf(&quot;%d\n&quot;, i);
+}
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">for i in range(10):
+    print(i)
+</code></pre>
+<h3 id="4-funcoes">4. Funções</h3>
+<h4 id="definicao-de-funcao">Definição de Função</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">int somar(int a, int b) {
+    return a + b;
+}
+
+void imprimir_msg(char* mensagem) {
+    printf(&quot;%s\n&quot;, mensagem);
+}
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">def somar(a, b):
+    return a + b
+
+def imprimir_msg(mensagem):
+    print(mensagem)
+</code></pre>
+<h4 id="funcao-main">Função Main</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    printf(&quot;Hello World\n&quot;);
+    return 0;
+}
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">def main():
+    print(&quot;Hello World&quot;)
+    return 0
+
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<h3 id="5-entrada-e-saida">5. Entrada e Saída</h3>
+<h4 id="printf">Printf</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">printf(&quot;Numero: %d\n&quot;, x);
+printf(&quot;Float: %.2f\n&quot;, y);
+printf(&quot;Char: %c\n&quot;, c);
+printf(&quot;String: %s\n&quot;, str);
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">print(f&quot;Numero: {x}&quot;)
+print(f&quot;Float: {y:.2f}&quot;)
+print(f&quot;Char: {c}&quot;)
+print(f&quot;String: {str}&quot;)
+</code></pre>
+<h4 id="scanf-simplificado">Scanf (Simplificado)</h4>
+<p><strong>C:</strong></p>
+<pre><code class="language-c">scanf(&quot;%d&quot;, &amp;x);
+scanf(&quot;%f&quot;, &amp;y);
+</code></pre>
+<p><strong>Python:</strong></p>
+<pre><code class="language-python">x = int(input())
+y = float(input())
+</code></pre>
+<hr />
+<h2 id="gramatica-formal-bnf">📋 Gramática Formal (BNF)</h2>
+<h3 id="programa">Programa</h3>
+<pre><code class="language-bnf">program         → declaration_list
+
+declaration_list → declaration_list declaration
+                 | declaration
+
+declaration     → var_declaration
+                | fun_declaration
+                | include_declaration
+
+include_declaration → '#include' '&lt;' ID '&gt;'
+                    | '#include' STRING_LIT
+</code></pre>
+<h3 id="declaracoes-de-variaveis">Declarações de Variáveis</h3>
+<pre><code class="language-bnf">var_declaration → type_specifier ID ';'
+                | type_specifier ID '=' expression ';'
+                | type_specifier ID '[' INT_LIT ']' ';'
+                | type_specifier ID '[' INT_LIT ']' '=' '{' expression_list '}' ';'
+
+type_specifier  → 'int' | 'float' | 'char' | 'void'
+</code></pre>
+<h3 id="declaracoes-de-funcoes">Declarações de Funções</h3>
+<pre><code class="language-bnf">fun_declaration → type_specifier ID '(' params ')' compound_stmt
+
+params          → param_list | 'void' | ε
+
+param_list      → param_list ',' param
+                | param
+
+param           → type_specifier ID
+                | type_specifier ID '[' ']'
+</code></pre>
+<h3 id="comandos">Comandos</h3>
+<pre><code class="language-bnf">compound_stmt   → '{' local_declarations statement_list '}'
+
+statement_list  → statement_list statement
+                | ε
+
+statement       → expression_stmt
+                | compound_stmt
+                | selection_stmt
+                | iteration_stmt
+                | return_stmt
+
+expression_stmt → expression ';'
+                | ';'
+
+selection_stmt  → 'if' '(' expression ')' statement
+                | 'if' '(' expression ')' statement 'else' statement
+
+iteration_stmt  → 'while' '(' expression ')' statement
+                | 'for' '(' expression_stmt expression_stmt expression ')' statement
+
+return_stmt     → 'return' ';'
+                | 'return' expression ';'
+</code></pre>
+<h3 id="expressoes">Expressões</h3>
+<pre><code class="language-bnf">expression      → var '=' expression
+                | simple_expression
+
+simple_expression → additive_expression relop additive_expression
+                  | additive_expression
+
+relop           → '&lt;=' | '&lt;' | '&gt;' | '&gt;=' | '==' | '!='
+
+additive_expression → additive_expression addop term
+                    | term
+
+addop           → '+' | '-'
+
+term            → term mulop factor
+                | factor
+
+mulop           → '*' | '/' | '%'
+
+factor          → '(' expression ')'
+                | var
+                | call
+                | INT_LIT
+                | FLOAT_LIT
+                | CHAR_LIT
+
+call            → ID '(' args ')'
+
+args            → arg_list | ε
+
+arg_list        → arg_list ',' expression
+                | expression
+
+var             → ID
+                | ID '[' expression ']'
+</code></pre>
+<hr />
+<h2 id="mapeamento-de-tipos-c-python">🎯 Mapeamento de Tipos C → Python</h2>
+<table>
+<thead>
+<tr>
+<th>Tipo C</th>
+<th>Tipo Python</th>
+<th>Inicialização</th>
+<th>Observações</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td><code>int</code></td>
+<td><code>0</code></td>
+<td>Números inteiros</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td><code>float</code></td>
+<td><code>0.0</code></td>
+<td>Números de ponto flutuante</td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td><code>str</code></td>
+<td><code>'\0'</code></td>
+<td>Caractere único como string</td>
+</tr>
+<tr>
+<td><code>char[]</code></td>
+<td><code>list[str]</code></td>
+<td><code>['\0'] * size</code></td>
+<td>Array de caracteres</td>
+</tr>
+<tr>
+<td><code>int[]</code></td>
+<td><code>list[int]</code></td>
+<td><code>[0] * size</code></td>
+<td>Array de inteiros</td>
+</tr>
+<tr>
+<td><code>void</code></td>
+<td><code>None</code></td>
+<td>-</td>
+<td>Tipo de retorno vazio</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="tratamento-de-erros">🚨 Tratamento de Erros</h2>
+<h3 id="erros-lexicos">Erros Léxicos</h3>
+<ul>
+<li>Caracteres não reconhecidos</li>
+<li>Literais malformados</li>
+<li>Comentários não fechados</li>
+</ul>
+<h3 id="erros-sintaticos">Erros Sintáticos</h3>
+<ul>
+<li>Parênteses não balanceados</li>
+<li>Chaves não balanceadas</li>
+<li>Ponto e vírgula ausente</li>
+<li>Estrutura de função inválida</li>
+</ul>
+<h3 id="erros-semanticos">Erros Semânticos</h3>
+<ul>
+<li>Variável não declarada</li>
+<li>Redeclaração de variável</li>
+<li>Tipo incompatível em atribuição</li>
+<li>Função não declarada</li>
+<li>Número incorreto de argumentos</li>
+</ul>
+<hr />
+<h2 id="limitacoes-do-subconjunto-c">📊 Limitações do Subconjunto C</h2>
+<h3 id="nao-suportado-versao-inicial">Não Suportado (Versão Inicial)</h3>
+<ul>
+<li>Ponteiros (<code>*</code>, <code>&amp;</code>)</li>
+<li>Estruturas (<code>struct</code>)</li>
+<li>Uniões (<code>union</code>)</li>
+<li>Enumerações (<code>enum</code>)</li>
+<li>Arquivos múltiplos</li>
+<li>Preprocessador complexo</li>
+<li>Bibliotecas externas (além de stdio.h básico)</li>
+<li>Recursão complexa</li>
+<li>Arrays multidimensionais</li>
+<li>Strings como <code>char*</code></li>
+</ul>
+<h3 id="funcionalidades-futuras-sprints-posteriores">Funcionalidades Futuras (Sprints Posteriores)</h3>
+<ul>
+<li>Ponteiros básicos</li>
+<li>Estruturas simples</li>
+<li>Arrays multidimensionais</li>
+<li>Mais bibliotecas padrão</li>
+<li>Otimizações de código</li>
+</ul>
+<hr />
+<h2 id="casos-de-teste-representativos">🧪 Casos de Teste Representativos</h2>
+<h3 id="teste-1-programa-basico">Teste 1: Programa Básico</h3>
+<p><strong>Entrada:</strong></p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main() {
+    int x = 10;
+    int y = 20;
+    int soma = x + y;
+    printf(&quot;Soma: %d\n&quot;, soma);
+    return 0;
+}
+</code></pre>
+<h3 id="teste-2-funcao-com-parametros">Teste 2: Função com Parâmetros</h3>
+<p><strong>Entrada:</strong></p>
+<pre><code class="language-c">int multiplicar(int a, int b) {
+    return a * b;
+}
+
+int main() {
+    int resultado = multiplicar(5, 3);
+    printf(&quot;Resultado: %d\n&quot;, resultado);
+    return 0;
+}
+</code></pre>
+<h3 id="teste-3-estruturas-de-controle">Teste 3: Estruturas de Controle</h3>
+<p><strong>Entrada:</strong></p>
+<pre><code class="language-c">int main() {
+    for (int i = 1; i &lt;= 10; i++) {
+        if (i % 2 == 0) {
+            printf(&quot;%d é par\n&quot;, i);
+        } else {
+            printf(&quot;%d é ímpar\n&quot;, i);
+        }
+    }
+    return 0;
+}
+</code></pre>
+<h3 id="teste-4-arrays">Teste 4: Arrays</h3>
+<p><strong>Entrada:</strong></p>
+<pre><code class="language-c">int main() {
+    int numeros[5] = {1, 2, 3, 4, 5};
+    int soma = 0;
+
+    for (int i = 0; i &lt; 5; i++) {
+        soma += numeros[i];
+    }
+
+    printf(&quot;Soma: %d\n&quot;, soma);
+    return 0;
+}
+</code></pre>
+<hr />
+<p><strong>Versão:</strong> 1.0<br />
+<strong>Data:</strong> 17 de Setembro de 2025<br />
+<strong>Equipe:</strong> Grupo 10 - Compiladores 1</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.top"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2027 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../guia-instalacao-uso/">
+      
+      
+        <link rel="next" href="../linguagem-fonte-c/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Manual Técnico - Grupo 10 - Compiladores 1</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Poppins";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#manual-tecnico-compilador-c-para-python" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-header__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Grupo 10 - Compiladores 1
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Manual Técnico
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2c-1.82 0-3.53.5-5 1.35C8 5.08 10 8.3 10 12s-2 6.92-5 8.65C6.47 21.5 8.18 22 10 22a10 10 0 0 0 10-10A10 10 0 0 0 10 2"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="blue-grey"  aria-label="Mudar para modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Mudar para modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../sobre/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Sobre o Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia-instalacao-uso/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Instalação e Uso
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Manual Técnico
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../linguagem-fonte-c/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Tokens e Estrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../SUMARIO_EXECUTIVO/" class="md-tabs__link">
+          
+  
+  
+  Sprint 1
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../README_TESTES/" class="md-tabs__link">
+          
+  
+  
+  Testes
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../atas/ata01/" class="md-tabs__link">
+          
+  
+  
+  Atas
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Grupo 10 - Compiladores 1" class="md-nav__button md-logo" aria-label="Grupo 10 - Compiladores 1" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Grupo 10 - Compiladores 1
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Davicamilo23/2025.2-Compiladores-1_Grupo-10" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sobre/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sobre o Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia-instalacao-uso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Instalação e Uso
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Técnico
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Técnico
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão Geral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitetura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fases-do-compilador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fases do Compilador
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fases do Compilador">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fase-1-analise-lexica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Análise Léxica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-2-analise-sintatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Análise Sintática
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-3-analise-semantica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Análise Semântica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-4-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-5-geracao-de-codigo-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Geração de Código Python
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrutura-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Dados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estrutura de Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arvore-sintatica-abstrata-ast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Árvore Sintática Abstrata (AST)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabela-de-simbolos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabela de Símbolos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisoes-de-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisões de Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decisões de Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitetura-em-fases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura em Fases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representacao-intermediaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Representação Intermediária
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gerenciamento-de-escopos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerenciamento de Escopos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tratamento de Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitações">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcionalidades-nao-suportadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funcionalidades Não Suportadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-geracao-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Geração de Código
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-analise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Análise
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Arquivos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-de-execucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de Execução
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideracoes-de-implementacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Considerações de Implementação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Considerações de Implementação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gerenciamento-de-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerenciamento de Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tratamento-de-erros_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tratamento de Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extensibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extensibilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../linguagem-fonte-c/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tokens e Estrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprint 1
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Sprint 1
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../SUMARIO_EXECUTIVO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sumário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../DOCUMENTACAO_SPRINT1/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Detalhes Técnicos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CHANGELOG/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testes
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Testes
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../README_TESTES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Atas
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Atas
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata01/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 01
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata02/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 02
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../atas/ata03/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reunião 03
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão Geral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Arquitetura">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fases-do-compilador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fases do Compilador
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Fases do Compilador">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fase-1-analise-lexica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 1: Análise Léxica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-2-analise-sintatica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 2: Análise Sintática
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-3-analise-semantica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 3: Análise Semântica
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-4-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 4: Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fase-5-geracao-de-codigo-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fase 5: Geração de Código Python
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrutura-de-dados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Dados
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estrutura de Dados">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arvore-sintatica-abstrata-ast" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Árvore Sintática Abstrata (AST)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tabela-de-simbolos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tabela de Símbolos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisoes-de-design" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisões de Design
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decisões de Design">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#arquitetura-em-fases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura em Fases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#representacao-intermediaria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Representação Intermediária
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gerenciamento-de-escopos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerenciamento de Escopos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrategia-de-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tratamento-de-erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tratamento de Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Limitações">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcionalidades-nao-suportadas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funcionalidades Não Suportadas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-otimizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Otimização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-geracao-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Geração de Código
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limitacoes-de-analise" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações de Análise
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-arquivos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Arquivos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fluxo-de-execucao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo de Execução
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consideracoes-de-implementacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Considerações de Implementação
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Considerações de Implementação">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#gerenciamento-de-memoria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gerenciamento de Memória
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tratamento-de-erros_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tratamento de Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extensibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Extensibilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="manual-tecnico-compilador-c-para-python">Manual Técnico - Compilador C para Python</h1>
+<h2 id="visao-geral">Visão Geral</h2>
+<p>Este documento descreve a arquitetura, decisões de design e limitações do compilador que traduz código C para Python. O compilador foi desenvolvido utilizando Flex para análise léxica e Bison para análise sintática, implementado em linguagem C.</p>
+<h2 id="arquitetura">Arquitetura</h2>
+<p>O compilador segue uma arquitetura em fases, onde cada fase processa o código fonte e produz uma representação intermediária para a próxima fase.</p>
+<h3 id="fases-do-compilador">Fases do Compilador</h3>
+<h4 id="fase-1-analise-lexica">Fase 1: Análise Léxica</h4>
+<p>A análise léxica é realizada pelo Flex através do arquivo <code>lexer/lexer.l</code>. Esta fase converte o código fonte em uma sequência de tokens.</p>
+<p><strong>Componentes principais:</strong>
+- Scanner gerado pelo Flex
+- Reconhecimento de palavras-chave, identificadores, literais e operadores
+- Tratamento de comentários (linha única <code>//</code> e múltiplas linhas <code>/* */</code>)
+- Suporte a strings e caracteres com escape sequences</p>
+<p><strong>Tokens reconhecidos:</strong>
+- Tipos primitivos: <code>int</code>, <code>float</code>, <code>char</code>, <code>void</code>
+- Palavras-chave: <code>if</code>, <code>else</code>, <code>while</code>, <code>for</code>, <code>return</code>
+- Operadores: aritméticos, relacionais, lógicos, de atribuição
+- Delimitadores: parênteses, chaves, colchetes, ponto e vírgula</p>
+<h4 id="fase-2-analise-sintatica">Fase 2: Análise Sintática</h4>
+<p>A análise sintática é realizada pelo Bison através do arquivo <code>parser/parser.y</code>. Esta fase valida a estrutura gramatical do programa e constrói a Árvore Sintática Abstrata (AST).</p>
+<p><strong>Características:</strong>
+- Parser LALR(1) gerado pelo Bison
+- Gramática baseada na sintaxe C
+- Construção da AST durante o parsing através de ações semânticas
+- Tratamento de precedência e associatividade de operadores</p>
+<p><strong>Estrutura da gramática:</strong>
+- Unidade de tradução (programa completo)
+- Declarações externas (funções e variáveis globais)
+- Definições de funções
+- Statements e expressões</p>
+<h4 id="fase-3-analise-semantica">Fase 3: Análise Semântica</h4>
+<p>A análise semântica é realizada em dois passos sobre a AST:</p>
+<p><strong>Passo 1: Declaração de Símbolos</strong>
+- Percorre a AST coletando declarações
+- Insere símbolos na tabela de símbolos
+- Gerencia escopos (global, função, bloco)
+- Detecta redeclarações no mesmo escopo</p>
+<p><strong>Passo 2: Checagem Semântica</strong>
+- Verifica uso de variáveis antes da declaração
+- Valida compatibilidade de tipos em expressões
+- Verifica tipos de retorno de funções
+- Detecta operações inválidas (ex: módulo com float)</p>
+<p><strong>Tabela de Símbolos:</strong>
+- Implementação com hash table
+- Armazena informações sobre variáveis, arrays e funções
+- Campos: nome, categoria, tipo, nível de ponteiro, flag de inicialização
+- Suporte a funções built-in da biblioteca padrão C (printf, scanf, etc.)</p>
+<h4 id="fase-4-otimizacao">Fase 4: Otimização</h4>
+<p>O módulo de otimização realiza transformações na AST para melhorar o código gerado:</p>
+<p><strong>Passo 1: Propagação de Constantes</strong>
+- Identifica variáveis inicializadas com valores literais
+- Substitui usos de variáveis constantes por seus valores
+- Invalida constantes quando reatribuídas com valores não-literais</p>
+<p><strong>Passo 2: Constant Folding</strong>
+- Avalia expressões com literais em tempo de compilação
+- Simplifica operações aritméticas e lógicas com constantes
+- Exemplo: <code>2 + 3</code> é transformado em <code>5</code></p>
+<p><strong>Passo 3: Simplificação de Expressões</strong>
+- Aplica identidades algébricas básicas
+- Exemplos: <code>x + 0 → x</code>, <code>x * 1 → x</code>, <code>x - x → 0</code></p>
+<p><strong>Passo 4: Remoção de Código Morto</strong>
+- Remove blocos condicionais com condições constantes
+- Remove loops com condições sempre falsas
+- Remove expressões sem efeitos colaterais</p>
+<p><strong>Passo 5: Fixpoint</strong>
+- Repete os passes anteriores até convergência
+- Permite propagação de constantes em cadeia</p>
+<h4 id="fase-5-geracao-de-codigo-python">Fase 5: Geração de Código Python</h4>
+<p>A geração de código é realizada pelo módulo <code>gerador_python.c</code>, que percorre a AST e gera código Python equivalente.</p>
+<p><strong>Características:</strong>
+- Geração recursiva baseada no tipo de nó da AST
+- Conversão de tipos C para tipos Python
+- Tradução de estruturas de controle (if, while, for)
+- Tratamento de funções e chamadas de função
+- Conversão de printf para print com f-strings</p>
+<h3 id="estrutura-de-dados">Estrutura de Dados</h3>
+<h4 id="arvore-sintatica-abstrata-ast">Árvore Sintática Abstrata (AST)</h4>
+<p>A AST é uma representação hierárquica do programa fonte. Cada nó possui:</p>
+<ul>
+<li>Tipo do nó (declaração, expressão, comando, etc.)</li>
+<li>Tipo de dado semântico (int, float, char, ponteiro)</li>
+<li>Nível de escopo</li>
+<li>Linha do código fonte</li>
+<li>Dados específicos conforme o tipo de nó</li>
+</ul>
+<p><strong>Tipos de nós principais:</strong>
+- Literais: inteiros, floats, caracteres, strings
+- Identificadores: variáveis, funções
+- Operadores: binários e unários
+- Declarações: variáveis, arrays, funções
+- Comandos: atribuição, if, while, for, return, blocos
+- Estruturais: programa, listas, parâmetros</p>
+<h4 id="tabela-de-simbolos">Tabela de Símbolos</h4>
+<p>A tabela de símbolos utiliza uma hash table para armazenar informações sobre identificadores:</p>
+<ul>
+<li>Nome do símbolo</li>
+<li>Categoria (variável, array, função)</li>
+<li>Tipo de dado</li>
+<li>Nível de ponteiro (para ponteiros)</li>
+<li>Flag de inicialização</li>
+<li>Encadeamento para resolução de colisões</li>
+</ul>
+<h2 id="decisoes-de-design">Decisões de Design</h2>
+<h3 id="arquitetura-em-fases">Arquitetura em Fases</h3>
+<p>A separação clara entre fases permite:
+- Manutenção facilitada de cada componente
+- Testes independentes de cada fase
+- Extensibilidade para novas funcionalidades
+- Debugging mais simples através de pontos de verificação</p>
+<h3 id="representacao-intermediaria">Representação Intermediária</h3>
+<p><strong>AST como representação intermediária:</strong>
+- Preserva toda a informação semântica do programa
+- Facilita múltiplas passadas de análise e otimização
+- Estrutura recursiva natural para geração de código
+- Permite transformações antes da geração final</p>
+<h3 id="gerenciamento-de-escopos">Gerenciamento de Escopos</h3>
+<p><strong>Abordagem com pilha de escopos:</strong>
+- Implementação simples e eficiente
+- Suporte a escopos aninhados (global, função, bloco)
+- Busca de símbolos através dos escopos hierárquicos
+- Detecção de variáveis não declaradas</p>
+<h3 id="estrategia-de-otimizacao">Estratégia de Otimização</h3>
+<p><strong>Abordagem conservadora:</strong>
+- Invalida constantes em qualquer reatribuição não-literal
+- Evita análise de fluxo de controle complexa
+- Garante correção mesmo sem análise profunda
+- Permite implementação incremental de otimizações mais avançadas</p>
+<p><strong>Múltiplos passes:</strong>
+- Permite convergência para fixpoint
+- Propaga constantes em cadeia
+- Aplica otimizações que dependem de outras otimizações</p>
+<h3 id="tratamento-de-erros">Tratamento de Erros</h3>
+<p><strong>Mensagens de erro descritivas:</strong>
+- Indicação clara do tipo de erro
+- Localização através de número de linha
+- Mensagens em português para facilitar uso
+- Continuação da análise quando possível para detectar múltiplos erros</p>
+<h2 id="limitacoes">Limitações</h2>
+<h3 id="funcionalidades-nao-suportadas">Funcionalidades Não Suportadas</h3>
+<p><strong>Tipos e Estruturas:</strong>
+- Structs e unions não são suportados
+- Enums não são suportados
+- Typedef não é suportado
+- Apenas tipos primitivos (int, float, char) e ponteiros são suportados</p>
+<p><strong>Recursos de C:</strong>
+- Macros do pré-processador (#define, #include) não são processados
+- Casts explícitos não são suportados
+- Operador ternário (?:) não é suportado
+- Operadores de incremento/decremento (++, --) não são suportados
+- Operadores compostos de atribuição (+=, -=, etc.) são reconhecidos mas não totalmente implementados</p>
+<p><strong>Ponteiros:</strong>
+- Aritmética de ponteiros é limitada
+- Ponteiros para funções não são suportados
+- Ponteiros para ponteiros têm suporte limitado</p>
+<p><strong>Arrays:</strong>
+- Arrays multidimensionais não são suportados
+- Inicialização de arrays é limitada
+- Arrays como parâmetros de função têm limitações</p>
+<p><strong>Funções:</strong>
+- Funções variádicas não são suportadas
+- Recursão pode ter limitações dependendo do caso
+- Ponteiros para funções não são suportados</p>
+<p><strong>Biblioteca Padrão:</strong>
+- Apenas algumas funções built-in são reconhecidas (printf, scanf, etc.)
+- Headers não são processados
+- Funções da biblioteca padrão não são implementadas, apenas reconhecidas</p>
+<h3 id="limitacoes-de-otimizacao">Limitações de Otimização</h3>
+<p><strong>Análise de Fluxo:</strong>
+- Não realiza análise de fluxo de controle avançada
+- Não detecta caminhos onde variáveis permanecem constantes
+- Invalidação conservadora pode perder otimizações</p>
+<p><strong>Análise Interprocedural:</strong>
+- Constantes não propagam entre funções
+- Análise limitada ao escopo de função</p>
+<p><strong>Análise de Ponteiros:</strong>
+- Não realiza alias analysis
+- Não rastreia valores através de ponteiros</p>
+<p><strong>Dead Code Elimination:</strong>
+- Remoção básica de código morto
+- Não detecta código inacessível através de análise de fluxo</p>
+<h3 id="limitacoes-de-geracao-de-codigo">Limitações de Geração de Código</h3>
+<p><strong>Conversão de Tipos:</strong>
+- Conversões implícitas podem não ser totalmente equivalentes entre C e Python
+- Tipos de ponteiro são convertidos de forma simplificada</p>
+<p><strong>Semântica:</strong>
+- Algumas diferenças de semântica entre C e Python podem não ser totalmente tratadas
+- Comportamento de divisão inteira pode diferir
+- Overflow de inteiros não é detectado</p>
+<p><strong>Performance:</strong>
+- Código Python gerado pode não ser otimizado
+- Não há otimizações específicas para Python</p>
+<h3 id="limitacoes-de-analise">Limitações de Análise</h3>
+<p><strong>Verificação de Tipos:</strong>
+- Verificação básica de compatibilidade
+- Conversões implícitas podem mascarar erros
+- Não detecta todos os casos de uso incorreto de tipos</p>
+<p><strong>Verificação de Escopo:</strong>
+- Escopos aninhados são suportados, mas análise pode ser limitada em casos complexos
+- Shadowing de variáveis pode não ser totalmente verificado</p>
+<p><strong>Detecção de Erros:</strong>
+- Alguns erros semânticos podem não ser detectados
+- Uso de variáveis não inicializadas pode não ser sempre detectado
+- Divisão por zero não é detectada em tempo de compilação (apenas em alguns casos)</p>
+<h2 id="estrutura-de-arquivos">Estrutura de Arquivos</h2>
+<pre><code>2025.2-Compiladores-1_Grupo-10/
+├── lexer/
+│   └── lexer.l              # Especificação do analisador léxico (Flex)
+├── parser/
+│   └── parser.y              # Gramática do analisador sintático (Bison)
+├── src/
+│   ├── main.c                # Programa principal, orquestra as fases
+│   ├── gerador_python.c      # Geração de código Python
+│   ├── gerador_python.h      # Interface do gerador
+│   ├── tabela_simbolos/
+│   │   ├── tabela.c          # Implementação da tabela de símbolos
+│   │   ├── tabela.h          # Interface da tabela de símbolos
+│   │   ├── ast.c             # Implementação da AST
+│   │   ├── ast.h             # Definição da AST
+│   │   └── tipos.h           # Definições de tipos
+│   └── otimizador/
+│       ├── otimizador.c      # Implementação das otimizações
+│       └── otimizador.h      # Interface do otimizador
+├── tests/                    # Casos de teste
+├── Makefile                  # Automação da compilação
+└── docs/                     # Documentação
+</code></pre>
+<h2 id="fluxo-de-execucao">Fluxo de Execução</h2>
+<ol>
+<li><strong>Inicialização</strong>: Carrega funções built-in na tabela de símbolos</li>
+<li><strong>Fase 1 - Análise Léxica e Sintática</strong>: Flex converte código fonte em tokens, Bison valida estrutura e constrói AST</li>
+<li><strong>Fase 2 - Tabela de Símbolos</strong>: Exibe estado atual da tabela de símbolos</li>
+<li><strong>Fase 3 - Análise Semântica</strong>: </li>
+<li>Passo 1: Declaração de símbolos (coleta declarações da AST)</li>
+<li>Passo 2: Checagem semântica (valida uso de símbolos e tipos)</li>
+<li><strong>Fase 4 - Otimização</strong>: Múltiplas passadas na AST para aplicar otimizações</li>
+<li><strong>Fase 5 - Geração de Código</strong>: Percorre AST e gera código Python</li>
+<li><strong>Finalização</strong>: Libera memória e fecha arquivos</li>
+</ol>
+<h2 id="consideracoes-de-implementacao">Considerações de Implementação</h2>
+<h3 id="gerenciamento-de-memoria">Gerenciamento de Memória</h3>
+<ul>
+<li>Alocação dinâmica para nós da AST</li>
+<li>Strings são duplicadas para evitar problemas com buffer do Flex</li>
+<li>Liberação recursiva da AST ao final</li>
+<li>Tabela de símbolos utiliza hash table com encadeamento</li>
+</ul>
+<h3 id="tratamento-de-erros_1">Tratamento de Erros</h3>
+<ul>
+<li>Erros sintáticos são reportados pelo Bison</li>
+<li>Erros semânticos são detectados durante análise semântica</li>
+<li>Compilação pode continuar para detectar múltiplos erros</li>
+<li>Mensagens de erro incluem localização (linha)</li>
+</ul>
+<h3 id="extensibilidade">Extensibilidade</h3>
+<p>A arquitetura permite extensões futuras:
+- Novos tipos de nós na AST podem ser adicionados
+- Novas otimizações podem ser implementadas como passes adicionais
+- Novos tipos de dados podem ser adicionados ao sistema de tipos
+- Novas construções sintáticas podem ser adicionadas à gramática</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.path", "navigation.top"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
